@@ -97,4 +97,38 @@ abstract class BatchUpload_Application_AbstractActionController extends Omeka_Co
     {
         return \json_decode($str, false);
     }
+    
+    /**
+     * Run validation on a given form with passed parameters and carry over data if invalid.
+     * 
+     * @param Omeka_Form $form The form to validate.
+     * @param bool $validOnly Whether to carry only valid values.
+     * @param array $data The submitted data. Defaults to $_POST if unspecified.
+     * @return bool Whether the submitted data was valid. If no data submitted, return true.
+     */
+    protected function validateAndCarryForm($form, $validOnly=false, $data=null)
+    {
+        // Default to $_POST
+        if ($data === null)
+        {
+            $data = $_POST;
+        }
+        // Run only on POST and PUT (submissions)
+        if ($this->getRequest()->isPost() || $this->getRequest()->isPut())
+        {
+            // Carry data only 
+            if ($validity = $form->isValid($data))
+            {
+                $options = $validOnly ? $form->getValidValues($data) : $form->getValues();
+                unset($options['settings_csrf']);
+                foreach ($options as $key => $value) {
+                    $form->getElement($key)->setValue($value);
+                }
+            }
+            // Return whether valid
+            return $validity;
+        }
+        // Pretend it's valid if it is for a different action
+        return true;
+    }
 }

@@ -15,7 +15,9 @@ class BatchUploadPlugin extends Omeka_Plugin_AbstractPlugin
         'install',
         'uninstall',
         'upgrade',
+        'initialize',
         'define_routes',
+        'after_save_batch_upload_job',
     );
 
     /**
@@ -24,8 +26,14 @@ class BatchUploadPlugin extends Omeka_Plugin_AbstractPlugin
      * @var array
      */
     protected $_filters = array(
-        'batch_upload_register_job_type',
         'admin_navigation_main',
+        'batch_upload_register_job_type',
+    );
+    
+    protected $_supported_job_types = array(
+        'new_collection',
+        'existing_collection',
+        'individual_items',
     );
 
     /**
@@ -38,12 +46,13 @@ class BatchUploadPlugin extends Omeka_Plugin_AbstractPlugin
         $db->query("CREATE TABLE IF NOT EXISTS `{$prefix}batch_upload_jobs` (
             `id` int(10) NOT NULL PRIMARY KEY AUTO_INCREMENT,
             `name` varchar(255) NOT NULL,
-            `step` int(10) DEFAULT 1,
+            `step` int(10) NOT NULL DEFAULT 1,
             `job_type` varchar(128) NOT NULL,
             `target_type` varchar(64),
             `target_id` int(10),
             `data` LONGTEXT,
             `owner_id` int(10) UNSIGNED NOT NULL,
+            `finished` timestamp DEFAULT NULL,
             `added` timestamp NOT NULL DEFAULT '2000-01-01 05:00:00',
             `modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             FOREIGN KEY (`owner_id`) REFERENCES `{$prefix}users`(`id`) ON DELETE CASCADE
@@ -126,6 +135,19 @@ class BatchUploadPlugin extends Omeka_Plugin_AbstractPlugin
     }
     
     /**
+     * HOOK: Initialization. Add wizard integrations.
+     */
+    public function hookInitialize()
+    {
+        foreach ($this->_supported_job_types as $supported_job_type)
+        {
+            $klass = "BatchUpload_Wizard_" . Inflector::camelize($supported_job_type);
+            $wizard = new $klass();
+            $wizard->integrate();
+        }
+    }
+    
+    /**
      * HOOK: Defining routes.
      * 
      * @param array $args
@@ -136,22 +158,26 @@ class BatchUploadPlugin extends Omeka_Plugin_AbstractPlugin
     }
     
     /**
-     * FILTER: Register job types available to this plugin.
+     * HOOK: After batch upload job is saved.
+     * Run the "new job" hook to initialize data in the job.
      * 
-     * @param array $jobTypes
-     * @return array
+     * @param array $args
      */
-    public function filterBatchUploadRegisterJobType($jobTypes)
+    public function hookAfterSaveBatchUploadJob($args)
     {
-        return array_merge($jobTypes, array(
-            'BatchUpload_JobType_IndividualItems',
-        ));
+        if ($args['insert'])
+        {
+            $batch_upload_job = $args['record'];
+            fire_plugin_hook('batch_upload_' . Inflector::underscore($batch_upload_job->job_type) . '_job_new', array('job' => $batch_upload_job));
+            $batch_upload_job->save();
+        }
     }
     
     /**
+     * FILTER: Add entry to admin navigation menu.
      * 
-     * @param type $nav
-     * @return type
+     * @param array $nav
+     * @return array
      */
     public function filterAdminNavigationMain($nav)
     {
@@ -160,5 +186,22 @@ class BatchUploadPlugin extends Omeka_Plugin_AbstractPlugin
             'uri' => url('batch-upload/jobs'),
         );
         return $nav;
+    }
+    
+    /**
+     * FILTER: Register job types available to this plugin.
+     * 
+     * @param array $jobTypes
+     * @return array
+     */
+    public function filterBatchUploadRegisterJobType($jobTypes)
+    {
+        foreach ($this->_supported_job_types as $supported_job_type)
+        {
+            $klass = "BatchUpload_Wizard_" . Inflector::camelize($supported_job_type);
+            $wizard = new $klass();
+            $jobTypes[$supported_job_type] = __($wizard->getTypeDescription());
+        }
+        return $jobTypes;
     }
 }

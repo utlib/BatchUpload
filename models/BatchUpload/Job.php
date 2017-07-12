@@ -50,6 +50,20 @@ class BatchUpload_Job extends Omeka_Record_AbstractRecord
     public $data;
     
     /**
+     * The User ID of the owner.
+     * 
+     * @var int
+     */
+    public $owner_id;
+    
+    /**
+     * The date this batch upload job was finished. Null if unfinished.
+     * 
+     * @var string
+     */
+    public $finished;
+    
+    /**
      * The date this batch upload job was added.
      *
      * @var string
@@ -64,12 +78,29 @@ class BatchUpload_Job extends Omeka_Record_AbstractRecord
     public $modified;
     
     /**
-     * Return the model targeted by this job.
+     * Initialize the mixins.
+     */
+    protected function _initializeMixins()
+    {
+        $this->_mixins[] = new Mixin_Owner($this);
+    }
+    
+    /**
+     * Return the model targeted by this job, if any.
      * @return Record
      */
     public function getTarget()
     {
-        return get_record_by_id($this->target_type, $this->target_id);
+        try
+        {
+            if ($this->target_type && $this->target_id)
+            {
+                return get_record_by_id($this->target_type, $this->target_id);
+            }
+        } catch (Exception $ex) {
+            debug("Exception when finding batch upload job target: {$ex->getMessage()}");
+        }
+        return null;
     }
     
     /**
@@ -123,6 +154,23 @@ class BatchUpload_Job extends Omeka_Record_AbstractRecord
     }
     
     /**
+     * Return whether this job is finished.
+     * @return bool
+     */
+    public function isFinished()
+    {
+        return $this->finished !== null;
+    }
+    
+    /**
+     * Mark this job as finished.
+     */
+    public function finish()
+    {
+        $this->finished = date("Y-m-d H:i:s");
+    }
+    
+    /**
      * Insert a row into this job and return the added row.
      * @param mixed $raw
      * @return BatchUpload_Row The inserted row.
@@ -157,5 +205,40 @@ class BatchUpload_Job extends Omeka_Record_AbstractRecord
     public function addCsvRow($headers, $values)
     {
         return $this->addJsonRow(array_combine($headers, $values));
+    }
+    
+    /**
+     * HOOK: Before-save hook.
+     * - Initialize new jobs to start at step 1.
+     * 
+     * @param array $args
+     */
+    protected function beforeSave($args)
+    {
+        if ($args['post'])
+        {
+            if ($args['insert']) {
+                $this->step = 1;
+            }
+        }
+    }
+    
+    /**
+     * HOOK: Validate hook.
+     * - Name must be filled.
+     * - Target type must be filled.
+     */
+    protected function _validate()
+    {
+        // Name must be filled
+        if (!$this->name)
+        {
+            $this->addError('name', __('Name must be filled.'));
+        }
+        // Target type must be filled
+        if (!$this->job_type)
+        {
+            $this->addError('job_type', __('Target type must be filled.'));
+        }
     }
 }
