@@ -97,8 +97,23 @@ class BatchUpload_JobsController extends BatchUpload_Application_AbstractActionC
                 'partial_assigns' => $partialAssigns,
             ));
         }
-        $partial = self::VIEW_STEM . '/' . $jobTypeSlug . '/' . $batch_upload_job->step . '.php';
-        $this->view->partial = $this->view->partial($partial, $partialAssigns->getData());
+        if ($batch_upload_job->isFinished())
+        {
+            if ($batch_upload_job->step != $oldStep)
+            {
+                $this->_helper->flashMessenger(__('The job "%s" has been completed!', $batch_upload_job->name), 'success');
+            }
+            else
+            {
+                $this->_helper->flashMessenger(__('The job "%s" is already complete.', $batch_upload_job->name), 'error');
+            }
+            $this->_helper->redirector('browse', null, null, array());
+        }
+        else
+        {
+            $partial = self::VIEW_STEM . '/' . $jobTypeSlug . '/' . $batch_upload_job->step . '.php';
+            $this->view->partial = $this->view->partial($partial, $partialAssigns->getData());
+        }
     }
     
     public function ajaxAction()
