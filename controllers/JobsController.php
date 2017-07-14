@@ -45,6 +45,11 @@ class BatchUpload_JobsController extends BatchUpload_Application_AbstractActionC
         }
     }
     
+    public function indexAction()
+    {
+        $this->_helper->redirector('browse', null, null, array());
+    }
+    
     public function browseAction()
     {
         $this->view->availableJobTypes = apply_filters('batch_upload_register_job_type', array());

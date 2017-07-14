@@ -183,7 +183,7 @@ class BatchUploadPlugin extends Omeka_Plugin_AbstractPlugin
     {
         $nav[] = array(
             'label' => __('Batch Upload'),
-            'uri' => url('batch-upload/jobs'),
+            'uri' => url(array(), 'batchupload_root'),
         );
         return $nav;
     }

@@ -45,7 +45,7 @@ echo flash();
                 <td>
                     <ul class="action-links group">
                         <li><a href="<?php echo html_escape(admin_url(array('controller' => 'jobs', 'id' => $batch_upload_job->id, 'action' => 'wizard'), 'batchupload_id')); ?>"><?php echo __("Continue"); ?></a></li>
-                        <li><a href="<?php echo html_escape(admin_url(array('controller' => 'jobs', 'id' => $batch_upload_job->id, 'action' => 'delete-confirm'), 'batchupload_id')); ?>"><?php echo __("Delete"); ?></a></li>
+                        <li><a href="<?php echo html_escape(admin_url(array('controller' => 'jobs', 'id' => $batch_upload_job->id, 'action' => 'delete-confirm'), 'batchupload_id')); ?>" class="delete-confirm"><?php echo __("Delete"); ?></a></li>
                     </ul>
                 </td>
             </tr>
