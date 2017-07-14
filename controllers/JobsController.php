@@ -51,6 +51,11 @@ class BatchUpload_JobsController extends BatchUpload_Application_AbstractActionC
         parent::browseAction();
     }
     
+    protected function _getBrowseDefaultSort()
+    {
+        return array('added', 'd');
+    }
+    
     public function addAction()
     {
         $form = new BatchUpload_Form_NewJob;
