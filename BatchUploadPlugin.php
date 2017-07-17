@@ -79,6 +79,7 @@ class BatchUploadPlugin extends Omeka_Plugin_AbstractPlugin
             `header` varchar(64) NOT NULL,
             `order` int(10) NOT NULL,
             `property` int(10) NOT NULL,
+            `html` tinyint(4) NOT NULL DEFAULT 0,
             `mapping_set_id` int(10),
             FOREIGN KEY (`mapping_set_id`) REFERENCES `{$prefix}batch_upload_mapping_sets`(`id`) ON DELETE CASCADE
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;");
