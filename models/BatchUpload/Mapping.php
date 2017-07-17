@@ -29,11 +29,28 @@ class BatchUpload_Mapping extends Omeka_Record_AbstractRecord
     public $property;
     
     /**
+     * Whether the element should contain HTML content.
+     * 
+     * @var int
+     */
+    public $html;
+    
+    /**
      * The ID of the mapping set that this mapping belongs to.
      * 
      * @var int
      */
     public $mapping_set_id;
+    
+    /**
+     * Listing of cacheable association method calls.
+     * 
+     * @var array
+     */
+    protected $_related = array(
+        'mappingSet' => 'getMappingSet',
+        'job' => 'getJob',
+    );
     
     /**
      * Return the mapping set that this mapping belongs to.

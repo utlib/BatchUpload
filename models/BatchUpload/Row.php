@@ -29,6 +29,15 @@ class BatchUpload_Row extends Omeka_Record_AbstractRecord
     public $data;
     
     /**
+     * Listing of cacheable association method calls.
+     * 
+     * @var array
+     */
+    protected $_related = array(
+        'job' => 'getJob',
+    );
+    
+    /**
      * Return the job that this row belongs to.
      * @return BatchUpload_Job
      */

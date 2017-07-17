@@ -1,6 +1,6 @@
 <?php
 echo head(array(
-    'title' => __('Batch Uploader'),
+    'title' => __('Batch Uploader') . ' | ' . __('Mappings'),
 ));
 require(__DIR__ . "/../shared/nav.php");
 echo flash();
@@ -26,17 +26,19 @@ echo flash();
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td>Stow</td>
-            <td>12</td>
-            <td>June 1 2017</td>
-            <td>
-                <ul class="action-links group">
-                    <li><a href="<?php html_escape(url('batch-upload/mapping-sets/edit/1')); ?>"><?php echo __("Edit"); ?></a></li>
-                    <li><a href="<?php html_escape(url('batch-upload/mapping-sets/delete-confirm/1')); ?>"><?php echo __("Delete"); ?></a></li>
-                </ul>
-            </td>
-        </tr>
+        <?php foreach ($batch_upload_mapping_sets as $batch_upload_mapping_set): ?>
+            <tr>
+                <td><?php echo $batch_upload_mapping_set->name; ?></td>
+                <td><?php echo $batch_upload_mapping_set->countMappings(); ?></td>
+                <td><?php echo format_date($batch_upload_mapping_set->added); ?></td>
+                <td>
+                    <ul class="action-links group">
+                        <li><a href="<?php echo html_escape(admin_url(array('controller' => 'mapping-sets', 'id' => $batch_upload_mapping_set->id, 'action' => 'edit'), 'batchupload_id')); ?>"><?php echo __("Edit"); ?></a></li>
+                        <li><a href="<?php echo html_escape(admin_url(array('controller' => 'mapping-sets', 'id' => $batch_upload_mapping_set->id, 'action' => 'delete-confirm'), 'batchupload_id')); ?>" class="delete-confirm"><?php echo __("Delete"); ?></a></li>
+                    </ul>
+                </td>
+            </tr>
+        <?php endforeach; ?>
     </tbody>
 </table>
 

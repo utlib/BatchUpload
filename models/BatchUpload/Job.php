@@ -78,6 +78,16 @@ class BatchUpload_Job extends Omeka_Record_AbstractRecord
     public $modified;
     
     /**
+     * Listing of cacheable association method calls.
+     * 
+     * @var array
+     */
+    protected $_related = array(
+        'mappingSet' => 'getMappingSet',
+        'mappings' => 'getMappings',
+    );
+    
+    /**
      * Initialize the mixins.
      */
     protected function _initializeMixins()
