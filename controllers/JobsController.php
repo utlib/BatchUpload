@@ -83,6 +83,7 @@ class BatchUpload_JobsController extends BatchUpload_Application_AbstractActionC
         $jobTypeSlug = Inflector::underscore($batch_upload_job->job_type);
         $partialAssigns = new BatchUpload_Application_DataContainer(array(
             'batch_upload_job' => $batch_upload_job,
+            'page_title' => null,
         ));
         $oldStep = $batch_upload_job->step;
         $request = $this->getRequest();
@@ -124,6 +125,7 @@ class BatchUpload_JobsController extends BatchUpload_Application_AbstractActionC
             $partial = self::VIEW_STEM . '/' . $jobTypeSlug . '/' . $batch_upload_job->step . '.php';
             $this->view->partial = $this->view->partial($partial, $partialAssigns->getData());
         }
+        $this->view->page_title = $partialAssigns->get('page_title');
     }
     
     public function ajaxAction()

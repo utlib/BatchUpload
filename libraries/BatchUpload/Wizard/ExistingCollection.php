@@ -17,6 +17,7 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
         $form = new BatchUpload_Form_CollectionSelect();
         $form->getElement('target_id')->setValue($job->target_id);
         $partialAssigns->set('form', $form);
+        $partialAssigns->set('page_title', 'Select Target');
     }
     
     public function step1Process($args)
