@@ -116,7 +116,7 @@ class BatchUpload_JobsController extends BatchUpload_Application_AbstractActionC
             }
             else
             {
-                $this->_helper->flashMessenger(__('The job "%s" is already complete.', $batch_upload_job->name), 'error');
+                $this->_helper->flashMessenger(__('The job "%s" has been completed!', $batch_upload_job->name), 'error');
             }
             $this->_helper->redirector('browse', null, null, array());
         }
@@ -160,5 +160,15 @@ class BatchUpload_JobsController extends BatchUpload_Application_AbstractActionC
             $r->setHeader($header, $headerBody);
         }
         $this->respondWithJson($response, $http->get('status'));
+    }
+    
+    public function lookupAction()
+    {
+        $batch_upload_job = $this->_helper->db->findById();
+        if (!$batch_upload_job)
+        {
+            return $this->_forward('not-found', 'error');
+        }
+        $this->respondWithJson($batch_upload_job);
     }
 }
