@@ -80,52 +80,45 @@ class BatchUpload_JobsController extends BatchUpload_Application_AbstractActionC
     public function wizardAction()
     {
         $batch_upload_job = $this->_helper->db->findById();
-        $jobTypeSlug = Inflector::underscore($batch_upload_job->job_type);
-        $partialAssigns = new BatchUpload_Application_DataContainer(array(
-            'batch_upload_job' => $batch_upload_job,
-            'page_title' => null,
-        ));
-        $oldStep = $batch_upload_job->step;
-        $request = $this->getRequest();
-        if ($request->isPost())
-        {
-            fire_plugin_hook("batch_upload_{$jobTypeSlug}_step_process", array(
-                'job' => $batch_upload_job,
-                'view' => $this->view,
-                'request' => $request,
-                'partial_assigns' => $partialAssigns,
-                'get' => $_GET,
-                'post' => $_POST,
-                'files' => $_FILES,
-            ));
-        }
-        if ($request->isGet() || $batch_upload_job->step != $oldStep)
-        {
-            fire_plugin_hook('batch_upload_' . $jobTypeSlug . '_step_form', array(
-                'job' => $batch_upload_job,
-                'view' => $this->view,
-                'request' => $request,
-                'partial_assigns' => $partialAssigns,
-            ));
-        }
         if ($batch_upload_job->isFinished())
         {
-            if ($batch_upload_job->step != $oldStep)
-            {
-                $this->_helper->flashMessenger(__('The job "%s" has been completed!', $batch_upload_job->name), 'success');
-            }
-            else
-            {
-                $this->_helper->flashMessenger(__('The job "%s" has been completed!', $batch_upload_job->name), 'error');
-            }
+            $this->_helper->flashMessenger(__('The job "%s" has been completed!', $batch_upload_job->name), 'success');
             $this->_helper->redirector('browse', null, null, array());
         }
         else
         {
+            $jobTypeSlug = Inflector::underscore($batch_upload_job->job_type);
+            $partialAssigns = new BatchUpload_Application_DataContainer(array(
+                'batch_upload_job' => $batch_upload_job,
+                'page_title' => null,
+            ));
+            $oldStep = $batch_upload_job->step;
+            $request = $this->getRequest();
+            if ($request->isPost())
+            {
+                fire_plugin_hook("batch_upload_{$jobTypeSlug}_step_process", array(
+                    'job' => $batch_upload_job,
+                    'view' => $this->view,
+                    'request' => $request,
+                    'partial_assigns' => $partialAssigns,
+                    'get' => $_GET,
+                    'post' => $_POST,
+                    'files' => $_FILES,
+                ));
+            }
+            if ($request->isGet() || $batch_upload_job->step != $oldStep)
+            {
+                fire_plugin_hook('batch_upload_' . $jobTypeSlug . '_step_form', array(
+                    'job' => $batch_upload_job,
+                    'view' => $this->view,
+                    'request' => $request,
+                    'partial_assigns' => $partialAssigns,
+                ));
+            }
             $partial = self::VIEW_STEM . '/' . $jobTypeSlug . '/' . $batch_upload_job->step . '.php';
             $this->view->partial = $this->view->partial($partial, $partialAssigns->getData());
+            $this->view->page_title = $partialAssigns->get('page_title');
         }
-        $this->view->page_title = $partialAssigns->get('page_title');
     }
     
     public function ajaxAction()

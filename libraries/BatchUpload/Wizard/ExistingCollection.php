@@ -2,6 +2,7 @@
 
 class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_AbstractWizard
 {
+    // Special property codes
     const SPECIAL_TYPE_UNMAPPED = 0;
     const SPECIAL_TYPE_TAGS = -1;
     const SPECIAL_TYPE_FILE = -2;
@@ -10,14 +11,26 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
     const SPECIAL_TYPE_PUBLIC = -5;
     const SPECIAL_TYPE_FEATURED = -6;
     
+    // Identify the name slug of the job type and number of steps
     public $job_type = "existing_collection";
-    public $steps = 3;
+    public $steps = 4; // Select target collection, specify metadata, create rows, upload files, bind files, show results
     
+    /**
+     * Hook for what to do when a new job is created.
+     * Set the target type to collection.
+     * 
+     * @param BatchUpload_Job $job
+     */
     public function newJob($job)
     {
+        // Initialize new job target type to Collection
         $job->target_type = "Collection";
     }
     
+    /**
+     * Rendering step 1's form for selecting the target collection.
+     * @param array $args
+     */
     public function step1Form($args)
     {
         $job = $args['job'];
@@ -28,57 +41,103 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
         $partialAssigns->set('page_title', __("Select Target"));
     }
     
+    /**
+     * Processing step 1's form for selecting the target collection.
+     * @param array $args
+     */
     public function step1Process($args)
     {
         $job = $args['job'];
         $partialAssigns = $args['partial_assigns'];
         $form = new BatchUpload_Form_CollectionSelect();
+        // If valid, record the target ID, go to the next step and save
         if ($this->validateAndCarryForm($form))
         {
+            $job->target_id = $form->getElement('target_id')->getValue();
             $job->step++;
             $job->save();
         }
+        // If invalid, go back to the form
         else
         {
             $partialAssigns->set('form', $form);
+            $partialAssigns->set('page_title', __("Select Target"));
         }
     }
     
+    /**
+     * Rendering step 2's form for mappings.
+     * @param array $args
+     */
     public function step2Form($args)
     {
         $partialAssigns = $args['partial_assigns'];
+        // Embed JS files
         queue_js_file('papaparse.min', 'lib/papaparse');
         queue_js_file('CsvImportMappings', 'js');
+        // Set page title
         $partialAssigns->set('page_title', __("Input Data"));
+        // These two partial variables drive the mappings screen.
+        // available_properties: Preprogrammed mappings from name to property ID. { header: id, header: id, ... }
+        // available_properties_options: HTML string consisting of options to place inside the property select dropdown.
         $availablePropertiesArray = $this->__getAvailablePropertiesArray();
         $partialAssigns->set('available_properties', $this->__getAvailablePropertiesJson($availablePropertiesArray));
         $partialAssigns->set('available_properties_options', $this->__getAvailablePropertiesOptions($availablePropertiesArray));
     }
     
+    /**
+     * Process step 2's submissions.
+     * @param array $args
+     */
     public function step2Process($args)
     {
         $job = $args['job'];
-        $partialAssigns = $args['partial_assigns'];
         $post = $args['post'];
         $valid = true;
-        if (!isset($post['metadata']) || empty($post['metadata']))
+        $csvData = array();
+        // Must have "metadata" mapping to be valid
+        if (empty($post['metadata']))
         {
-            
+            $valid = false;
         }
-        if ($valid)
+        // Must have "csv_data" and it should decode properly
+        if (empty($post['csv_data']))
         {
-            $job->step++;
-            $job->save();
+            $valid = false;
         }
         else
         {
-            queue_js_file('papaparse.min', 'lib/papaparse');
-            queue_js_file('CsvImportMappings', 'js');
-            $partialAssigns->set('page_title', __("Input Data"));
-            $partialAssigns->set('available_properties', $this->_getAvailableProperties());
+            $csvData = json_decode($post['csv_data'], true);
+            if (empty($csvData) || count($csvData[0]) != count($post['metadata']))
+            {
+                $valid = false;
+            }
+        }
+        // Proceed if valid
+        if ($valid)
+        {
+            // Go to step 3
+            $job->step++;
+            $job->save();
+            // Start background running job
+            Zend_Registry::get('bootstrap')->getResource('jobs')->sendLongRunning('BatchUpload_Job_GenerateRows', array(
+                'jobId' => $job->id,
+                'csvData' => $csvData,
+                'metadata' => $post['metadata'],
+                'hasHeaders' => isset($post['has_headers']),
+            ));
+        }
+        // Otherwise, re-render the form
+        else
+        {
+            $this->step2Form($args);
         }
     }
     
+    /**
+     * Return a utility array in the form { "Category": {"property_id": "Property Name"}, ... }
+     * @return array
+     */
     private function __getAvailablePropertiesArray()
     {
         $properties = array(
@@ -106,6 +165,11 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
         return $properties;
     }
     
+    /**
+     * Return an associative array for automatic mapping, in the form { "label": "property_id", ... }.
+     * @param array|null $availableProperties Utility array in same form returned by __getAvailablePropertiesArray().
+     * @return array
+     */
     private function __getAvailablePropertiesJson($availableProperties=null)
     {
         if ($availableProperties === null)
@@ -133,6 +197,11 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
         return $json;
     }
     
+    /**
+     * Return a string in HTML that can be inserted between SELECT tags to choose a property.
+     * @param array|null $availableProperties Utility array in same form returned by __getAvailablePropertiesArray().
+     * @return string
+     */
     private function __getAvailablePropertiesOptions($availableProperties=null)
     {
         if ($availableProperties === null)
@@ -150,5 +219,55 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
             $selectContent .= '</optgroup>';
         }
         return $selectContent;
+    }
+
+    /**
+     * Display the waiting screen for step 3's row generation.
+     * @param array $args
+     */
+    public function step3Form($args)
+    {
+        queue_js_file('MonitorStepStatus', 'js');
+        $job = $args['job'];
+        $partialAssigns = $args['partial_assigns'];
+        $partialAssigns->set('page_title', __("Processing Data Rows"));
+        $partialAssigns->set('status_url', admin_url(array('controller' => 'jobs', 'id' => $job->id, 'action' => 'lookup'), 'batchupload_id'));
+        $partialAssigns->set('current_step', 3);
+    }
+    
+    /**
+     * Display the file upload screen for step 4.
+     * @param array $args
+     */
+    public function step4Form($args)
+    {
+        $job = $args['job'];
+        $partialAssigns = $args['partial_assigns'];
+        queue_js_file('jquery.ui.widget', 'lib/jquery-file-upload/js/vendor');
+        queue_js_file('load-image.all.min', 'lib/jquery-file-upload/js');
+        queue_js_file('canvas-to-blob.min', 'lib/jquery-file-upload/js');
+        queue_js_file('jquery.iframe-transport', 'lib/jquery-file-upload/js');
+        queue_js_file('jquery.fileupload', 'lib/jquery-file-upload/js');
+        queue_js_file('jquery.fileupload-process', 'lib/jquery-file-upload/js');
+        queue_js_file('jquery.fileupload-image', 'lib/jquery-file-upload/js');
+        queue_js_file('jquery.fileupload-audio', 'lib/jquery-file-upload/js');
+        queue_js_file('jquery.fileupload-video', 'lib/jquery-file-upload/js');
+        queue_js_file('jquery.fileupload-validate', 'lib/jquery-file-upload/js');
+        // Collect rows
+        $fileRows = array();
+        foreach ($job->getUploadRows() as $row)
+        {
+            $fileRows[] = $row->getJsonData();
+        }
+        $partialAssigns->set('file_rows', $fileRows);
+    }
+    
+    /**
+     * Process AJAX uploads for step 4.
+     * @param array $args
+     */
+    public function step4Ajax($args)
+    {
+        $post = $args['post'];
     }
 }

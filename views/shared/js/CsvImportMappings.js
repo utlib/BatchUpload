@@ -2,7 +2,8 @@ jQuery(function() {
     // Variables
     var csvResults = {data:[]},
         currentRow = null,
-        countRow = null;
+        countRow = null,
+        hasHeaderChecked = jQuery('#has_headers').is(':checked');
         
     // Hide elements that should appear only after a file is loaded
     jQuery('#phase2').hide();
@@ -74,7 +75,7 @@ jQuery(function() {
                 });
             }
             jQuery('#next-step').attr('disabled', null);
-            refreshNavigator(papaData, jQuery('#has_headers').is(':checked'), currentRow, countRow);
+            refreshNavigator(papaData, hasHeaderChecked, currentRow, countRow);
             jQuery('#example-nav').show(200);
         } else {
             currentRow = null;
@@ -108,6 +109,26 @@ jQuery(function() {
             }
         });
     }
+    function refreshHiddenCsvData() {
+        jQuery('#csv-data').val('');
+        jQuery('#next-step').attr('disabled', true);
+        jQuery('#csv_file').parse({
+            config: {
+                header: false,
+                skipEmptyLines: true,
+                complete: function(results, file) {
+                    if (hasHeaderChecked) {
+                        jQuery('#csv-data').val(JSON.stringify(results.data.slice(1)));
+                    } else {
+                        jQuery('#csv-data').val(JSON.stringify(results.data));
+                    }
+                    if (results.data.length > 0) {
+                        jQuery('#next-step').attr('disabled', null);
+                    }
+                }
+            }
+        });
+    }
     
     // Read the CSV when a file is successfully loaded
     jQuery('#csv_file').change(function() {
@@ -117,14 +138,14 @@ jQuery(function() {
         jQuery('#csv-data').val('');
         jQuery(this).parse({
             config: {
-                header: jQuery('#has_headers').is(':checked'),
+                header: hasHeaderChecked,
                 skipEmptyLines: true,
                 complete: function(results, file) {
                     csvResults = results;
                     console.log("This file done: ", file, results);
-                    refreshTable(csvResults, jQuery('#has_headers').is(':checked'));
+                    refreshTable(csvResults, hasHeaderChecked);
                     jQuery('#phase2').show();
-                    jQuery('#csv-data').val(JSON.stringify(csvResults.data));
+                    refreshHiddenCsvData();
                 }
             }
         });
@@ -132,6 +153,7 @@ jQuery(function() {
     
     // Flip between using headers and not
     jQuery('#has_headers').change(function() {
+        hasHeaderChecked = jQuery(this).is(':checked');
         jQuery('#csv-data').val('');
         if (csvResults.data.length > 0) {
             jQuery('#csv_file').parse({
@@ -145,8 +167,8 @@ jQuery(function() {
                         if (currentRow >= countRow) {
                             currentRow = countRow-1;
                         }
-                        refreshHeader(csvResults, jQuery(this).is(':checked'), 0);
-                        jQuery('#csv-data').val(JSON.stringify(csvResults.data));
+                        refreshHeader(csvResults, hasHeaderChecked, 0);
+                        refreshHiddenCsvData();
                     }
                 }
             });
@@ -156,30 +178,30 @@ jQuery(function() {
     // Navigation buttons
     jQuery('#mapping-goto-first').click(function() {
         currentRow = 0;
-        refreshHeader(csvResults, jQuery('#has_headers').is(':checked'), currentRow);
-        refreshNavigator(csvResults, jQuery('#has_headers').is(':checked'), currentRow, countRow);
+        refreshHeader(csvResults, hasHeaderChecked, currentRow);
+        refreshNavigator(csvResults, hasHeaderChecked, currentRow, countRow);
     });
     jQuery('#mapping-goto-last').click(function() {
         currentRow = countRow-1;
-        refreshHeader(csvResults, jQuery('#has_headers').is(':checked'), currentRow);
-        refreshNavigator(csvResults, jQuery('#has_headers').is(':checked'), currentRow, countRow);
+        refreshHeader(csvResults, hasHeaderChecked, currentRow);
+        refreshNavigator(csvResults, hasHeaderChecked, currentRow, countRow);
     });
     jQuery('#mapping-goto-previous').click(function() {
         currentRow--;
-        refreshHeader(csvResults, jQuery('#has_headers').is(':checked'), currentRow);
-        refreshNavigator(csvResults, jQuery('#has_headers').is(':checked'), currentRow, countRow);
+        refreshHeader(csvResults, hasHeaderChecked, currentRow);
+        refreshNavigator(csvResults, hasHeaderChecked, currentRow, countRow);
     });
     jQuery('#mapping-goto-next').click(function() {
         currentRow++;
-        refreshHeader(csvResults, jQuery('#has_headers').is(':checked'), currentRow);
-        refreshNavigator(csvResults, jQuery('#has_headers').is(':checked'), currentRow, countRow);
+        refreshHeader(csvResults, hasHeaderChecked, currentRow);
+        refreshNavigator(csvResults, hasHeaderChecked, currentRow, countRow);
     });
     jQuery('#mapping-goto-random').click(function() {
         oldRow = currentRow;
         do {
             currentRow = Math.floor(Math.random() * countRow);
         } while (oldRow === currentRow)
-        refreshHeader(csvResults, jQuery('#has_headers').is(':checked'), currentRow);
-        refreshNavigator(csvResults, jQuery('#has_headers').is(':checked'), currentRow, countRow);
+        refreshHeader(csvResults, hasHeaderChecked, currentRow);
+        refreshNavigator(csvResults, hasHeaderChecked, currentRow, countRow);
     });
 });
