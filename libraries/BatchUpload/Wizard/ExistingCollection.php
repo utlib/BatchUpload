@@ -232,7 +232,7 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
         $partialAssigns = $args['partial_assigns'];
         $partialAssigns->set('page_title', __("Processing Data Rows"));
         $partialAssigns->set('status_url', admin_url(array('controller' => 'jobs', 'id' => $job->id, 'action' => 'lookup'), 'batchupload_id'));
-        $partialAssigns->set('current_step', 3);
+        $partialAssigns->set('current_step', $job->step);
     }
     
     /**
