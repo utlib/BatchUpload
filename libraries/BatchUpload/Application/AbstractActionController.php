@@ -15,7 +15,7 @@ abstract class BatchUpload_Application_AbstractActionController extends Omeka_Co
      */
     protected function getPaginatedModelSelect($modelName)
     {
-        $table = $this->_helper->db->getTable('BatchUpload_Job');
+        $table = $this->_helper->db->getTable($modelName);
         $sortField = $this->_getParam('sort_field') ? $_GET['sort_field'] : 'added';
         $sortOrder = ($this->_getParam('sort_dir') ? (($_GET['sort_dir'] == 'd') ? 'DESC' : 'ASC') : 'ASC');
         $select = $table->getSelectForFindBy();

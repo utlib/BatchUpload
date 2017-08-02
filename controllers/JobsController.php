@@ -129,15 +129,15 @@ class BatchUpload_JobsController extends BatchUpload_Application_AbstractActionC
             return $this->_forward('not-found', 'error');
         }
         $jobType = Inflector::underscore($batch_upload_job->job_type);
-        $response = BatchUpload_Application_DataContainer(array(
+        $response = new BatchUpload_Application_DataContainer(array(
             'step' => $batch_upload_job->step,
             'success' => true,
         ));
-        $http = BatchUpload_Application_DataContainer(array(
+        $http = new BatchUpload_Application_DataContainer(array(
             'status' => 200,
             'headers' => array(),
         ));
-        fire_plugin_hook('batch_upload' . $jobType . '_step_ajax', array(
+        fire_plugin_hook('batch_upload_' . $jobType . '_step_ajax', array(
             'job' => $batch_upload_job,
             'view' => $this->view,
             'request' => $this->getRequest(),
@@ -152,7 +152,7 @@ class BatchUpload_JobsController extends BatchUpload_Application_AbstractActionC
         {
             $r->setHeader($header, $headerBody);
         }
-        $this->respondWithJson($response, $http->get('status'));
+        $this->respondWithJson($response->getData(), $http->get('status'));
     }
     
     public function lookupAction()

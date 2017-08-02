@@ -236,6 +236,15 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
     }
     
     /**
+     * Don't do anything for step 3's processing, a background job is doing it.
+     * @param array $args
+     */
+    public function step3Process($args)
+    {
+        $this->step3Form($args);
+    }
+    
+    /**
      * Display the file upload screen for step 4.
      * @param array $args
      */
@@ -244,8 +253,8 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
         $job = $args['job'];
         $partialAssigns = $args['partial_assigns'];
         queue_js_file('jquery.ui.widget', 'lib/jquery-file-upload/js/vendor');
-        queue_js_file('load-image.all.min', 'lib/jquery-file-upload/js');
-        queue_js_file('canvas-to-blob.min', 'lib/jquery-file-upload/js');
+        queue_js_file('load-image.all.min', 'lib/jquery-file-upload/js/vendor');
+        queue_js_file('canvas-to-blob.min', 'lib/jquery-file-upload/js/vendor');
         queue_js_file('jquery.iframe-transport', 'lib/jquery-file-upload/js');
         queue_js_file('jquery.fileupload', 'lib/jquery-file-upload/js');
         queue_js_file('jquery.fileupload-process', 'lib/jquery-file-upload/js');
@@ -259,7 +268,18 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
         {
             $fileRows[] = $row->getJsonData();
         }
+        $partialAssigns->set('page_title', __("Supply Files"));
         $partialAssigns->set('file_rows', $fileRows);
+        $partialAssigns->set('processing_path', admin_url(array('id' => $job->id, 'controller' => 'jobs', 'action' => 'ajax'), 'batchupload_id'));
+    }
+    
+    /**
+     * Don't do anything for step 4's processing, AJAX is doing it.
+     * @param array $args
+     */
+    public function step4Process($args)
+    {
+        $this->step4Form($args);
     }
     
     /**
@@ -268,6 +288,39 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
      */
     public function step4Ajax($args)
     {
-        $post = $args['post'];
+        $job = $args['job'];
+        $files = $args['files'];
+        $response = $args['response'];
+        // Find the row for the given files
+        $affectedRows = get_db()->getTable('BatchUpload_Row')->findBySql("job_id = ? AND data LIKE CONCAT('%', ?, '%')", array($job->id, '"file":' . json_encode($files['files']['name'][0])));
+        $insertedFileRecords = array();
+        foreach ($affectedRows as $row)
+        {
+            $rowData = $row->getJsonData();
+            $insertedFileRecords = array_merge($insertedFileRecords, @insert_files_for_item($rowData['item'], 'Upload', 'files', array(
+                'ignore_invalid_files' => true,
+                'ignoreNoFile' => true,
+            )));
+            $row->delete();
+        }
+        // Generate response
+        $insertedFileEntries = array();
+        foreach ($insertedFileRecords as $insertedFileRecord)
+        {
+            $insertedFileEntries[] = array(
+                'url' => $insertedFileRecord->getWebPath(),
+                'name' => $files['files']['name'][0],
+                'type' => $insertedFileRecord->mime_type,
+                'thumbnail' => $insertedFileRecord->hasThumbnail() ? $insertedFileRecord->getWebPath('thumbnails') : '',
+                'size' => $insertedFileRecord->size,
+            );
+        }         
+        $response->set('files', $insertedFileEntries);
+        if ($job->countUploadRows() <= 0)
+        {
+            $response->set('finished', true);
+            $job->finish();
+            $job->save();
+        }
     }
 }

@@ -142,6 +142,15 @@ class BatchUpload_Job extends Omeka_Record_AbstractRecord
     }
     
     /**
+     * Return the number of data rows on this job.
+     * @return int
+     */
+    public function countUploadRows()
+    {
+        return $this->_db->getTable('BatchUpload_Row')->count(array('job_id' => $this->id));
+    }
+    
+    /**
      * Return the mapping set of this job.
      * @return BatchUpload_MappingSet|null
      */

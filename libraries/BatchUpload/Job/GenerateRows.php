@@ -46,6 +46,7 @@ class BatchUpload_Job_GenerateRows extends Omeka_Job_AbstractJob {
         // Get the batch upload job
         $job = $db->getTable('BatchUpload_Job')->find($this->_jobId);  debug('B');
         // Remember where any files need to be uploaded
+        $uploadRowOrder = 1;
         $needsUpload = false;
         // For each row of data:
         foreach ($this->_csvData as $dataRow)
@@ -166,10 +167,11 @@ class BatchUpload_Job_GenerateRows extends Omeka_Job_AbstractJob {
                 foreach ($uploads as $uploadNum => $upload)
                 {
                     $newJobRow = new BatchUpload_Row();
-                    $newJobRow->order = $uploadNum+1;
+                    $newJobRow->order = $uploadRowOrder+1;
                     $newJobRow->job_id = $this->_jobId;
                     $newJobRow->setJsonData(array(
                         'file' => $upload,
+                        'fileOrder' => $uploadNum,
                         'fileId' => null,
                         'item' => $newItem->id,
                     ));
