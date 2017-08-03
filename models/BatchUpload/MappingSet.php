@@ -119,6 +119,63 @@ class BatchUpload_MappingSet extends Omeka_Record_AbstractRecord
     }
     
     /**
+     * Return a CSV template string for this mapping set.
+     * @param array $columnValues File names in the form { mapping_id: ["filename", "filename", ...], ... }
+     * @return string
+     */
+    public function getCsvTemplate($columnValues=array())
+    {
+        // Get mappings in this set
+        $mappings = $this->getMappings();
+        
+        // Build CSV rows
+        // The header
+        $csvRows = array(array());
+        foreach ($mappings as $mapping)
+        {
+            $csvRows[0][] = $mapping->header;
+        }
+        // The body
+        $rowCount = 0;
+        // Find longest pre-filled $columnValue column
+        foreach ($columnValues as $columnValue)
+        {
+            $rowCount = max(array($rowCount, count($columnValue)));
+        }
+        // Pre-fill rows as far as the longest run goes
+        // If a column runs out of values, leave blank
+        for ($i = 0; $i < $rowCount; $i++)
+        {
+            $row = array();
+            foreach ($mappings as $mapping)
+            {
+                if (isset($columnValues[$mapping->id][$i]))
+                {
+                    $row[] = $columnValues[$mapping->id][$i];
+                }
+                else
+                {
+                    $row[] = '';
+                }
+            }
+            $csvRows[] = $row;
+        }
+        
+        // Capture output of fputcsv()
+        $memory = fopen('php://memory', 'w');
+        foreach ($csvRows as $csvRow)
+        {
+            fputcsv($memory, $csvRow, ',', '"', "\0");
+        }
+        fseek($memory, 0);
+        $csv = stream_get_contents($memory);
+        fclose($memory);
+        
+        // Return
+        return $csv;
+    }
+    
+    /**
      * Before-save hook.
      * @param array $args
      */

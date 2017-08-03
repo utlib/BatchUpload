@@ -299,6 +299,7 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
         $partialAssigns = $args['partial_assigns'];
         $partialAssigns->set('page_title', __("Processing Data Rows"));
         $partialAssigns->set('status_url', admin_url(array('controller' => 'jobs', 'id' => $job->id, 'action' => 'lookup'), 'batchupload_id'));
+        $partialAssigns->set('refresh_url', admin_url(array('controller' => 'jobs', 'id' => $job->id, 'action' => 'refresh'), 'batchupload_id'));
         $partialAssigns->set('current_step', $job->step);
     }
     
@@ -360,15 +361,44 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
         $response = $args['response'];
         // Find the row for the given files
         $affectedRows = get_db()->getTable('BatchUpload_Row')->findBySql("job_id = ? AND data LIKE CONCAT('%', ?, '%')", array($job->id, '"file":' . json_encode($files['files']['name'][0])));
-        $insertedFileRecords = array();
-        foreach ($affectedRows as $row)
+        if (empty($affectedRows))
         {
-            $rowData = $row->getJsonData();
-            $insertedFileRecords = array_merge($insertedFileRecords, @insert_files_for_item($rowData['item'], 'Upload', 'files', array(
-                'ignore_invalid_files' => true,
-                'ignoreNoFile' => true,
-            )));
-            $row->delete();
+            $affectedRows = array();
+        }
+        // Inserted and failed files
+        $insertedFileRecords = array();
+        $failedFiles = array();
+        // If there are no affected rows, this file is not expected
+        if (empty($affectedRows))
+        {
+            $failedFiles[] = array(
+                'name' => $files['files']['name'][0],
+                'reason' => __("File not expected"),
+            );
+        }
+        // Otherwise, the file is expected and we attempt to add it to all items that expect it
+        else
+        {
+            foreach ($affectedRows as $row)
+            {
+                $rowData = $row->getJsonData();
+                try {
+                    $oldErrorReporting = error_reporting();
+                    error_reporting($oldErrorReporting & E_ERROR);
+                    $insertedFiles = insert_files_for_item($rowData['item'], 'Upload', 'files', array(
+                        'ignore_invalid_files' => true,
+                        'ignoreNoFile' => true,
+                    ));
+                    error_reporting($oldErrorReporting);
+                    $insertedFileRecords = array_merge($insertedFileRecords, $insertedFiles);
+                } catch (Exception $ex) {
+                    $failedFiles[] = array(
+                        'name' => $files['files']['name'][0],
+                        'reason' => __($ex->getMessage()),
+                    );
+                }
+                $row->delete();
+            }
         }
         // Generate response
         $insertedFileEntries = array();
@@ -383,6 +413,7 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
             );
         }         
         $response->set('files', $insertedFileEntries);
+        $response->set('fails', $failedFiles);
         if ($job->countUploadRows() <= 0)
         {
             $response->set('finished', true);

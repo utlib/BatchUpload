@@ -5,6 +5,7 @@
                     <label for="has_headers"><?php echo __("Use Headers?"); ?></label>
                 </div>
                 <div class="inputs five columns omega">
+                    <p class="explanation"><?php echo __("Whether the first row of the CSV file is a header."); ?></p>
                     <input type="checkbox" name="has_headers" id="has_headers" checked="checked">
                 </div>
             </div>
@@ -13,6 +14,7 @@
                 <label for="csv_file" class="required"><?php echo __("Input File"); ?></label>
             </div>
             <div class="inputs five columns omega">
+                <p class="explanation"><?php echo __("The CSV file containing metadata and file names"); ?></p>
                 <input type="file" id="csv_file" accept=".csv,text/csv">
             </div>
         </div>
@@ -21,15 +23,18 @@
                 <div id="headers-label" class="two columns alpha">
                     <label><?php echo __("Apply Mappings"); ?></label>
                 </div>
-                <div class="inputs four columns">
-                    <select id="mapping-set-template" placeholder="<?php echo html_escape(__("Select a mapping template...")); ?>">
-                        <?php foreach ($mapping_sets as $mapping_set) : ?>
-                            <option value="<?php echo $mapping_set->id; ?>"><?php echo html_escape($mapping_set->name); ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="one column omega">
-                    <button type="button" class="small blue button" id="apply-template" data-url="<?php echo html_escape(admin_url(array('id' => $batch_upload_job->id, 'controller' => 'jobs', 'action' => 'ajax'), 'batchupload_id')); ?>"><?php echo __("Apply"); ?></button>
+                <div class="five columns omega">
+                    <p class="explanation"><?php echo __('Select an existing mapping template here and press "Apply" to copy it below.'); ?></p>
+                    <div class="inputs four columns alpha">
+                        <select id="mapping-set-template" placeholder="<?php echo html_escape(__("Select a mapping template...")); ?>">
+                            <?php foreach ($mapping_sets as $mapping_set) : ?>
+                                <option value="<?php echo $mapping_set->id; ?>"><?php echo html_escape($mapping_set->name); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="one column omega">
+                        <button type="button" class="small blue button" id="apply-template" data-url="<?php echo html_escape(admin_url(array('id' => $batch_upload_job->id, 'controller' => 'jobs', 'action' => 'ajax'), 'batchupload_id')); ?>"><?php echo __("Apply"); ?></button>
+                    </div>
                 </div>
             </div>
             <div class="seven columns">

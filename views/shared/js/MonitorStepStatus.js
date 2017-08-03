@@ -1,11 +1,11 @@
-function monitorJob(jobUrl, currentStep) {
+function monitorJob(jobUrl, currentStep, targetUrl) {
     setInterval(function() {
         jQuery.ajax({
             url: jobUrl,
             method: 'GET',
             success: function(data) {
                 if (data.step != currentStep || data.finished) {
-                    location.reload(true);
+                    window.location.href = targetUrl;
                 }
             }
         });

@@ -35,6 +35,7 @@ echo flash();
                     <ul class="action-links group">
                         <li><a href="<?php echo html_escape(admin_url(array('controller' => 'mapping-sets', 'id' => $batch_upload_mapping_set->id, 'action' => 'edit'), 'batchupload_id')); ?>"><?php echo __("Edit"); ?></a></li>
                         <li><a href="<?php echo html_escape(admin_url(array('controller' => 'mapping-sets', 'id' => $batch_upload_mapping_set->id, 'action' => 'delete-confirm'), 'batchupload_id')); ?>" class="delete-confirm"><?php echo __("Delete"); ?></a></li>
+                        <li><a href="<?php echo html_escape(admin_url(array('controller' => 'mapping-sets', 'id' => $batch_upload_mapping_set->id, 'action' => 'template'), 'batchupload_id')); ?>"><?php echo __('CSV Template'); ?></a></li>
                     </ul>
                 </td>
             </tr>

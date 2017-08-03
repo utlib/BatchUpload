@@ -164,4 +164,9 @@ class BatchUpload_JobsController extends BatchUpload_Application_AbstractActionC
         }
         $this->respondWithJson($batch_upload_job);
     }
+    
+    public function refreshAction()
+    {
+        $this->_helper->redirector('wizard', null, null, array('id' => $this->getParam('id')));
+    }
 }

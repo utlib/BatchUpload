@@ -33,7 +33,7 @@ echo flash();
                 $jobRow = apply_filters('batch_upload_' . Inflector::underscore($batch_upload_job->job_type) . '_job_row', array(
                     'job' => $batch_upload_job,
                     'name' => html_escape($batch_upload_job->name),
-                    'progress' => '',
+                    'progress' => $batch_upload_job->isFinished() ? __("Finished") : '',
                     'target' => $availableJobTypes[$batch_upload_job->job_type],
                 ));
             ?>
@@ -44,7 +44,9 @@ echo flash();
                 <td><?php echo format_date($batch_upload_job->added); ?></td>
                 <td>
                     <ul class="action-links group">
-                        <li><a href="<?php echo html_escape(admin_url(array('controller' => 'jobs', 'id' => $batch_upload_job->id, 'action' => 'wizard'), 'batchupload_id')); ?>"><?php echo __("Continue"); ?></a></li>
+                        <?php if (!$batch_upload_job->isFinished()) : ?>
+                            <li><a href="<?php echo html_escape(admin_url(array('controller' => 'jobs', 'id' => $batch_upload_job->id, 'action' => 'wizard'), 'batchupload_id')); ?>"><?php echo __("Continue"); ?></a></li>
+                        <?php endif; ?>
                         <li><a href="<?php echo html_escape(admin_url(array('controller' => 'jobs', 'id' => $batch_upload_job->id, 'action' => 'delete-confirm'), 'batchupload_id')); ?>" class="delete-confirm"><?php echo __("Delete"); ?></a></li>
                     </ul>
                 </td>
