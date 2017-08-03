@@ -22,12 +22,14 @@
                     <label><?php echo __("Apply Mappings"); ?></label>
                 </div>
                 <div class="inputs four columns">
-                    <select id="has_headers">
-                        <option value="1">Example Mapping</option>
+                    <select id="mapping-set-template" placeholder="<?php echo html_escape(__("Select a mapping template...")); ?>">
+                        <?php foreach ($mapping_sets as $mapping_set) : ?>
+                            <option value="<?php echo $mapping_set->id; ?>"><?php echo html_escape($mapping_set->name); ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
                 <div class="one column omega">
-                    <button type="button" class="small blue button"><?php echo __("Apply"); ?></button>
+                    <button type="button" class="small blue button" id="apply-template" data-url="<?php echo html_escape(admin_url(array('id' => $batch_upload_job->id, 'controller' => 'jobs', 'action' => 'ajax'), 'batchupload_id')); ?>"><?php echo __("Apply"); ?></button>
                 </div>
             </div>
             <div class="seven columns">
@@ -43,7 +45,7 @@
                     <tbody>
                     </tbody>
                 </table>
-                <button type="button" class="green button"><?php echo __("Save as New Mapping Template..."); ?></button>
+                <button type="button" class="green button" id="save-new-template" data-prompt="<?php echo html_escape(__("Enter the name of the new mapping template:")); ?>" data-url="<?php echo html_escape(admin_url(array('id' => $batch_upload_job->id, 'controller' => 'jobs', 'action' => 'ajax'), 'batchupload_id')); ?>"><?php echo __("Save as New Mapping Template..."); ?></button>
             </div>
             <input type="hidden" id="csv-data" name="csv_data">
         </div>

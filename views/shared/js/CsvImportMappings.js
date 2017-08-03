@@ -99,13 +99,14 @@ jQuery(function() {
                     _vs = (v.slice(0, maxWidth)) + (v.length > maxWidth ? '\u2026' : '');
                 _jqtr.find('td:first').text(_ks);
                 _jqtr.find('td:eq(1)').text(_vs);
-                _jqtr.find('input[name="metadata[' + i + '][header]"]').val(v);
+                _jqtr.find('input[name="metadata[' + i + '][header]"]').val(k);
             } else {
-                var v = entry[i],
+                var k = '[' + (i+1) + ']',
+                    v = entry[i],
                     _vs = (v.slice(0, maxWidth)) + (v.length > maxWidth ? '\u2026' : '');
-                _jqtr.find('td:first').text('[' + (i+1) + ']');
+                _jqtr.find('td:first').text(k);
                 _jqtr.find('td:eq(1)').text(_vs);
-                _jqtr.find('input[name="metadata[' + i + '][header]"]').val(v);
+                _jqtr.find('input[name="metadata[' + i + '][header]"]').val(k);
             }
         });
     }
@@ -203,5 +204,79 @@ jQuery(function() {
         } while (oldRow === currentRow)
         refreshHeader(csvResults, hasHeaderChecked, currentRow);
         refreshNavigator(csvResults, hasHeaderChecked, currentRow, countRow);
+    });
+    
+    // "Saving as new mapping template" button
+    jQuery('#save-new-template').click(function() {
+        var jqt = jQuery(this),
+            name = prompt(jqt.data('prompt'), ""), // Get name of new mapping set
+            mappingsData = [];
+        if (name !== null) {
+            // Capture values from mappings
+            jQuery('#metadata-table tbody tr').each(function(index) {
+                var elem = jQuery(this);
+                mappingsData.push({
+                    header: elem.find("input[name*='header']").val(),
+                    order: index+1,
+                    property: parseInt(elem.find("select[name*='property']").val()),
+                    html: elem.find("input[name*='html']").is(':checked') ? 1 : 0
+                });
+            });
+            // Send request to AJAX callback
+            // See BatchUpload_Wizard_ExistingCollection::step2Ajax for details
+            jQuery.ajax({
+                url: jqt.data('url'),
+                method: 'post',
+                dataType: 'json',
+                data: {
+                    action: 'save-mapping',
+                    set_name: name,
+                    mappings: mappingsData
+                },
+                success: function(data) {
+                    jQuery('#mapping-set-template').append('<option value="' + data.mapping_set + '">' + jQuery('<div />').text(name).html() + '</option>');
+                    alert(data.message);
+                }
+            });
+        }
+    });
+    
+    // "Apply" button
+    jQuery('#apply-template').click(function() {
+        jQuery.ajax({
+            url: jQuery(this).data('url'),
+            method: 'post',
+            dataType: 'json',
+            data: {
+                action: 'apply-mapping',
+                mapping_set: parseInt(jQuery('#mapping-set-template').val())
+            },
+            success: function(data) {
+                if (data.success) {
+                    if (hasHeaderChecked) {
+                        jQuery.each(data.mappings, function(i, v) {
+                            var row = null;
+                            jQuery('#metadata-table tbody tr').each(function(ii) {
+                                if (jQuery(this).find("input[name*='header']").val() === v.header) {
+                                    row = jQuery('#metadata-table tbody tr:eq(' + ii + ')');
+                                    return false;
+                                }
+                            });
+                            if (row) {
+                                row.find("select[name*='property']").val(v.property);
+                                row.find("input[name*='html']").attr('checked', v.html ? true : null);
+                            }
+                        });
+                    } else {
+                        jQuery.each(data.mappings, function(i, v) {
+                            var row = jQuery('#metadata-table tbody tr:eq(' + i + ')');
+                            row.find("input[name*='header']").val(v.header);
+                            row.find("select[name*='property']").val(v.property);
+                            row.find("input[name*='html']").val(v.html);
+                        });
+                    }
+                }
+            }
+        });
     });
 });

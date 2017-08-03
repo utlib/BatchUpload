@@ -36,6 +36,15 @@ class BatchUpload_Wizard_IndividualItems extends BatchUpload_Wizard_ExistingColl
     }
     
     /**
+     * Process step 1's AJAX requests.
+     * @param array $args
+     */
+    public function step1Ajax($args)
+    {
+        parent::step2Ajax($args);
+    }
+    
+    /**
      * Rendering step 2's form for creating rows
      * @param array $args
      */
@@ -51,6 +60,15 @@ class BatchUpload_Wizard_IndividualItems extends BatchUpload_Wizard_ExistingColl
     public function step2Process($args)
     {
         parent::step3Process($args);
+    }
+    
+    /**
+     * Process step 2's AJAX requests.
+     * @param array $args
+     */
+    public function step2Ajax($args)
+    {
+        parent::step3Ajax($args);
     }
     
     /**

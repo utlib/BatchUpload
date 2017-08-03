@@ -83,6 +83,7 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
         $availablePropertiesArray = $this->__getAvailablePropertiesArray();
         $partialAssigns->set('available_properties', $this->__getAvailablePropertiesJson($availablePropertiesArray));
         $partialAssigns->set('available_properties_options', $this->__getAvailablePropertiesOptions($availablePropertiesArray));
+        $partialAssigns->set('mapping_sets', get_db()->getTable('BatchUpload_MappingSet')->findAll());
     }
     
     /**
@@ -131,6 +132,72 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
         else
         {
             $this->step2Form($args);
+        }
+    }
+    
+    /**
+     * Process step 2's potential AJAX calls
+     * @param array $args
+     */
+    public function step2Ajax($args)
+    {
+        $post = $args['post'];
+        $response = $args['response'];
+        $http = $args['http'];
+        // Multiplex via "action" key
+        if (!empty($post['action']))
+        {
+            switch ($post['action'])
+            {
+                // Save mapping
+                // Accepts { action: "save-mapping", set_name: "...", mappings: [{header:"...", order:o, property:"...", html:true/false}, ...] }
+                // Responds { success: true/false, mapping_set: id }
+                case 'save-mapping':
+                    try {
+                        $newMappingSet = new BatchUpload_MappingSet();
+                        $newMappingSet->name = $post['set_name'];
+                        $newMappingSet->save();
+                        foreach ($post['mappings'] as $i => $mappingData)
+                        {
+                            $newMapping = new BatchUpload_Mapping();
+                            $newMapping->mapping_set_id = $newMappingSet->id;
+                            $newMapping->header = $mappingData['header'];
+                            $newMapping->order = $i+1;
+                            $newMapping->property = $mappingData['property'];
+                            $newMapping->html = $mappingData['html'];
+                            $newMapping->save();
+                        }
+                        $response->set('mapping_set', $newMappingSet->id);
+                        $response->set('message', __('Successfully added mapping template "%s"!', $post['set_name']));
+                    } catch (Exception $ex) {
+                        $response->set('success', false);
+                        $response->set('message', $ex->getMessage());
+                        $http->set('status', 422);
+                    }
+                    break;
+                // Apply mapping
+                // Accepts { action: "apply-mapping", mapping_set: id }
+                // Responds { success: true/false, mappings: [{header:"...", order:o, property:"...", html:true/false}, ...] }
+                case 'apply-mapping':
+                    try {
+                        $mappingsData = array();
+                        $mappingSet = get_db()->getTable('BatchUpload_MappingSet')->find($post['mapping_set']);
+                        foreach ($mappingSet->getMappings() as $mapping)
+                        {
+                            $mappingsData[] = array(
+                                'header' => $mapping->header,
+                                'order' => $mapping->order,
+                                'property' => $mapping->property,
+                                'html' => $mapping->html,
+                            );
+                        }
+                        $response->set('mappings', $mappingsData);
+                    } catch (Exception $ex) {
+                        $response->set('success', false);
+                        $response->set('message', $ex->getMessage());
+                    }
+                    break;
+            }
         }
     }
     
