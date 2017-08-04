@@ -6,6 +6,7 @@ jQuery(function() {
     jQuery('#fileupload').fileupload({
         url: <?php echo js_escape($processing_path) ?>,
         dataType: 'json',
+        sequentialUploads: true,
         done: function (e, data) {
             jQuery.each(data.result.files, function (index, file) {
                 jQuery('.file-block[data-filename=' + JSON.stringify(file.name) + ']').remove();
