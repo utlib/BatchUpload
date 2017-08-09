@@ -52,7 +52,7 @@ class BatchUploadPlugin extends Omeka_Plugin_AbstractPlugin
             `target_id` int(10),
             `data` LONGTEXT,
             `owner_id` int(10) UNSIGNED NOT NULL,
-            `finished` timestamp DEFAULT NULL,
+            `finished` timestamp NULL DEFAULT NULL,
             `added` timestamp NOT NULL DEFAULT '2000-01-01 05:00:00',
             `modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             FOREIGN KEY (`owner_id`) REFERENCES `{$prefix}users`(`id`) ON DELETE CASCADE
