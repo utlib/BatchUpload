@@ -3,10 +3,13 @@
 /**
  * Form helper for adding a new job.
  * 
- * @package BatchUpload/Form
+ * @package Form
  */
 class BatchUpload_Form_NewJob extends Omeka_Form
 {
+    /**
+     * Set up elements in the form.
+     */
     public function init()
     {
         // Top-level parent

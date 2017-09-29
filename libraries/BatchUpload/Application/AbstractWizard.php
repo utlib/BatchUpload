@@ -1,11 +1,33 @@
 <?php
 
+/**
+ * Abstract template for import wizards.
+ * 
+ * @package BatchUpload
+ */
 abstract class BatchUpload_Application_AbstractWizard
 {
+    /**
+     * Name slug for the job type. Must be alphanumeric+underscore.
+     * @var string
+     */
     public $job_type = "abstract_wizard";
+    
+    /**
+     * Human-readable name of the job type.
+     * @var string 
+     */
     public $job_type_description = "Abstract Wizard";
+    
+    /**
+     * Number of steps in the wizard's workflow.
+     * @var int
+     */
     public $steps = 1;
     
+    /**
+     * Attach processing properties of this wizard to hooks and filters.
+     */
     public final function integrate()
     {
         $jobTypeSlug = Inflector::underscore($this->job_type);
@@ -16,11 +38,19 @@ abstract class BatchUpload_Application_AbstractWizard
         add_filter("batch_upload_{$jobTypeSlug}_job_row", array($this, "jobRow"));
     }
     
+    /**
+     * Delegate new-job hook to overridden newJob() method.
+     * @param array $args
+     */
     public final function _newJob($args)
     {
         $this->newJob($args["job"]);
     }
     
+    /**
+     * Delegate form hook to stepNForm methods (N is the current step).
+     * @param array $args
+     */
     public final function _stepForm($args)
     {
         $methodName = "step{$args['job']->step}Form";
@@ -30,6 +60,11 @@ abstract class BatchUpload_Application_AbstractWizard
         }
     }
     
+    /**
+     * Delegate process hook to stepNProcess methods (N is the current step).
+     * If the delegated method is not implemented, automatically advance step.
+     * @param array $args
+     */
     public final function _stepProcess($args)
     {
         $methodName = "step{$args['job']->step}Process";
@@ -47,6 +82,10 @@ abstract class BatchUpload_Application_AbstractWizard
         }
     }
     
+    /**
+     * Delegate ajax hook to stepNAjax methods (N is the current step).
+     * @param array $args
+     */
     public final function _stepAjax($args)
     {
         $methodName = "step{$args['job']->step}Ajax";
@@ -56,16 +95,29 @@ abstract class BatchUpload_Application_AbstractWizard
         }
     }
     
+    /**
+     * Get the default wizard type description.
+     * @return string
+     */
     public function getTypeDescription()
     {
         return Inflector::humanize($this->job_type);
     }
     
+    /**
+     * Placeholder for action after creating a new job of this kind.
+     * @param BatchUpload_Job $job
+     */
     public function newJob($job)
     {
         debug("Starting job: {$job->name}");
     }
     
+    /**
+     * Placeholder for filling a table row in browse for a job of this kind.
+     * @param array $row
+     * @return array
+     */
     public function jobRow($row)
     {
         $row['target'] = Inflector::humanize($this->job_type);

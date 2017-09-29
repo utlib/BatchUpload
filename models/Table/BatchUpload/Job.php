@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Table for batch upload jobs.
+ * @package models/Table
+ */
 class Table_BatchUpload_Job extends Omeka_Db_Table
 {
     /**

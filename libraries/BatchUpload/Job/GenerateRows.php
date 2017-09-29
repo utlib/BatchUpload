@@ -1,8 +1,33 @@
 <?php
 
+/**
+ * Background job for generating rows from submitted metadata gathered from CSV.
+ * 
+ * @package Job
+ */
 class BatchUpload_Job_GenerateRows extends Omeka_Job_AbstractJob {
-    private $_jobId, $_csvData, $_metadataPostData;
+    /**
+     * The BatchUpload_Job ID that this background job is running for.
+     * @var int
+     */
+    private $_jobId;
     
+    /**
+     * CSV data in [[col0...col(n-1)], ...] form
+     * @var array
+     */
+    private $_csvData;
+    
+    /**
+     * Metadata in [{header: ?, property: ?, `html: `}, ...] form (backticks = optional)
+     * @var array
+     */
+    private $_metadataPostData;
+    
+    /**
+     * Initialize this background job.
+     * @param array $options
+     */
     public function __construct(array $options)
     {
         parent::__construct($options);
@@ -11,14 +36,11 @@ class BatchUpload_Job_GenerateRows extends Omeka_Job_AbstractJob {
         $this->_metadataPostData = $options['metadata']; // Metadata in [{header: ?, property: ?, `html: `}, ...] (backticks = optional)
         debug("Processing batch upload job #{$this->_jobId}}");
         debug(count($this->_csvData) . " CSV rows");
-        debug(count($this->_csvData[0]));
-        debug(count($this->_metadataPostData));
     }
     
     /**
      * Main runnable method
      */
-    
     public function perform()
     {
         try {
@@ -42,9 +64,9 @@ class BatchUpload_Job_GenerateRows extends Omeka_Job_AbstractJob {
     {
         debug('Starting job');
         // Start up
-        $db = get_db(); debug('A');
+        $db = get_db();
         // Get the batch upload job
-        $job = $db->getTable('BatchUpload_Job')->find($this->_jobId);  debug('B');
+        $job = $db->getTable('BatchUpload_Job')->find($this->_jobId);
         // Remember where any files need to be uploaded
         $uploadRowOrder = 1;
         $needsUpload = false;
@@ -61,13 +83,12 @@ class BatchUpload_Job_GenerateRows extends Omeka_Job_AbstractJob {
                 'item_type_id' => null,
                 'public' => false,
                 'featured' => false,
-            );  debug('C');
+            );
             // For each metadata mapping
             foreach ($dataRow as $i => $v)
             {
                 // Find corresponding metadata key
                 $k = $this->_metadataPostData[$i]['property'];
-                 debug('D');
                 // Discard if it is property 0 (unmapped) or its value is empty:
                 if (empty($k) || $k == BatchUpload_Wizard_ExistingCollection::SPECIAL_TYPE_UNMAPPED || empty(trim($v)))
                 {
@@ -79,12 +100,12 @@ class BatchUpload_Job_GenerateRows extends Omeka_Job_AbstractJob {
                     // If it starts with http: or https:, queue it as a file
                     if (substr($v, 0, 7) == 'http://' || substr($v, 0, 8) == 'https://')
                     {
-                        $urls[] = $v; debug("Got URL");
+                        $urls[] = $v;
                     }
                     // Otherwise, record it as an upload
                     else
                     {
-                        $uploads[] = $v; debug("Got upload");
+                        $uploads[] = $v;
                         // This job stills needs uploading
                         $needsUpload = true;
                     }
@@ -152,13 +173,8 @@ class BatchUpload_Job_GenerateRows extends Omeka_Job_AbstractJob {
                         'html' => isset($this->_metadataPostData[$i]['html']),
                     );
                 }
-                 debug('E');
             }
-            //? Create the item with as much information as possible
-            debug('F');
-            debug(json_encode($specialProperties));
-            debug(json_encode($metadata));
-            debug(json_encode($urls));
+            // Create the item with as much information as possible
             $newItem = insert_item($specialProperties, $metadata, array('file_transfer_type' => 'Url', 'files' => $urls));
             debug("Created new item " . $newItem->id);
             // If there are uploads, create a job data row with { "file": "str", "fileid": null, "order": int, "item": int }
@@ -195,6 +211,12 @@ class BatchUpload_Job_GenerateRows extends Omeka_Job_AbstractJob {
         }
     }
     
+    /**
+     * Utility for finding a collection by name.
+     * @param Omeka_Db $db
+     * @param string $name Name of the collection.
+     * @return Collection
+     */
     private function __getCollectionByName($db, $name)
     {
         $element = $db->getTable('Element')->findByElementSetNameAndElementName('Dublin Core', 'Title')->id;

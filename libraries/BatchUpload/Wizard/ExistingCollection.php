@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Wizard for importing items into an existing collection.
+ * @package Wizard
+ */
 class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_AbstractWizard
 {
     // Special property codes

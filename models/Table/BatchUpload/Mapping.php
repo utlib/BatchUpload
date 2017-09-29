@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Table for header mappings.
+ * @package models/Table
+ */
 class Table_BatchUpload_Mapping extends Omeka_Db_Table
 {
     /**
