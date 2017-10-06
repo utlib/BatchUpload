@@ -123,12 +123,14 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
         {
             // Go to step 3
             $job->step++;
+            $job->setJsonData(array(
+                'csvData' => $csvData,
+                'metadata' => $post['metadata'],
+            ));
             $job->save();
             // Start background running job
             Zend_Registry::get('bootstrap')->getResource('jobs')->sendLongRunning('BatchUpload_Job_GenerateRows', array(
                 'jobId' => $job->id,
-                'csvData' => $csvData,
-                'metadata' => $post['metadata'],
                 'hasHeaders' => isset($post['has_headers']),
             ));
         }

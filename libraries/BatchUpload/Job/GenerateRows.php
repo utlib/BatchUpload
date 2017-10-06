@@ -32,8 +32,6 @@ class BatchUpload_Job_GenerateRows extends Omeka_Job_AbstractJob {
     {
         parent::__construct($options);
         $this->_jobId = $options['jobId']; // The ID of the batch upload job
-        $this->_csvData = $options['csvData']; // CSV data in [[col0...col(n-1)], ...] form
-        $this->_metadataPostData = $options['metadata']; // Metadata in [{header: ?, property: ?, `html: `}, ...] (backticks = optional)
         debug("Processing batch upload job #{$this->_jobId}}");
         debug(count($this->_csvData) . " CSV rows");
     }
@@ -67,6 +65,10 @@ class BatchUpload_Job_GenerateRows extends Omeka_Job_AbstractJob {
         $db = get_db();
         // Get the batch upload job
         $job = $db->getTable('BatchUpload_Job')->find($this->_jobId);
+        // Grab metadata from it
+        $jobMetadata = $job->getJsonData();
+        $this->_csvData = $jobMetadata['csvData']; // CSV data in [[col0...col(n-1)], ...] form
+        $this->_metadataPostData = $jobMetadata['metadata']; // Metadata in [{header: ?, property: ?, `html: `}, ...] (backticks = optional)
         // Remember where any files need to be uploaded
         $uploadRowOrder = 1;
         $needsUpload = false;
