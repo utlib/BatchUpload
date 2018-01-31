@@ -30,6 +30,7 @@ echo flash();
     <tbody>
         <?php foreach ($batch_upload_jobs as $batch_upload_job): ?>
             <?php
+                if (!isset($availableJobTypes[$batch_upload_job->job_type])) continue;
                 $jobRow = apply_filters('batch_upload_' . Inflector::underscore($batch_upload_job->job_type) . '_job_row', array(
                     'job' => $batch_upload_job,
                     'name' => html_escape($batch_upload_job->name),

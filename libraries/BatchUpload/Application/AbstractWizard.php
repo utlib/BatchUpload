@@ -131,7 +131,12 @@ abstract class BatchUpload_Application_AbstractWizard
      */
     public function jobRow($row)
     {
-        $row['target'] = Inflector::humanize($this->job_type);
+        $job = $row['job'];
+        if (!$job->isFinished())
+        {
+            $row['progress'] = __("Step %d of %d", $job->step, $this->steps);
+        }
+        $row['target'] = __($this->job_type_description);
         return $row;
     }
     

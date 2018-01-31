@@ -33,6 +33,22 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
     }
     
     /**
+     * Filter for changing the value
+     * @param array $row
+     * @return array
+     */
+    public function jobRow($row)
+    {
+        $row = parent::jobRow($row);
+        $job = $row['job'];
+        if (!empty($job->target_id) && $collection = get_record_by_id($job->target_type, $job->target_id))
+        {
+            $row['target'] = link_to_collection(null, array(), 'show', $collection);
+        }
+        return $row;
+    }
+    
+    /**
      * Rendering step 1's form for selecting the target collection.
      * @param array $args
      */
