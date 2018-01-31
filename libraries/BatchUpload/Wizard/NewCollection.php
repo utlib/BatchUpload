@@ -7,6 +7,7 @@
 class BatchUpload_Wizard_NewCollection extends BatchUpload_Wizard_ExistingCollection
 {
     public $job_type = "new_collection";
+    public $job_type_description = "New Collection";
     public $steps = 4;
     
     /**

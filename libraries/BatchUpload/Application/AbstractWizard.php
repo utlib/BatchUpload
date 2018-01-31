@@ -17,7 +17,7 @@ abstract class BatchUpload_Application_AbstractWizard
      * Human-readable name of the job type.
      * @var string 
      */
-    public $job_type_description = "Abstract Wizard";
+    public $job_type_description = "";
     
     /**
      * Number of steps in the wizard's workflow.
@@ -36,6 +36,17 @@ abstract class BatchUpload_Application_AbstractWizard
         add_plugin_hook("batch_upload_{$jobTypeSlug}_step_process", array($this, '_stepProcess'));
         add_plugin_hook("batch_upload_{$jobTypeSlug}_step_ajax", array($this, '_stepAjax'));
         add_filter("batch_upload_{$jobTypeSlug}_job_row", array($this, "jobRow"));
+    }
+    
+    /**
+     * Registering the current job type in the given batch_upload_register_job_type filter argument array.
+     * @param array $args
+     * @return array
+     */
+    public final function addType($args)
+    {
+        $args[$this->job_type] = __($this->job_type_description);
+        return $args;
     }
     
     /**
@@ -101,7 +112,7 @@ abstract class BatchUpload_Application_AbstractWizard
      */
     public function getTypeDescription()
     {
-        return Inflector::humanize($this->job_type);
+        return empty($this->job_type_description) ? Inflector::humanize($this->job_type) : $this->job_type_description;
     }
     
     /**

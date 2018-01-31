@@ -17,6 +17,7 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
     
     // Identify the name slug of the job type and number of steps
     public $job_type = "existing_collection";
+    public $job_type_description = "Existing Collection";
     public $steps = 4; // Select target collection, specify metadata, create rows, upload files
     
     /**

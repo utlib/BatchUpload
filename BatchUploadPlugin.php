@@ -201,7 +201,7 @@ class BatchUploadPlugin extends Omeka_Plugin_AbstractPlugin
         {
             $klass = "BatchUpload_Wizard_" . Inflector::camelize($supported_job_type);
             $wizard = new $klass();
-            $jobTypes[$supported_job_type] = __($wizard->getTypeDescription());
+            $jobTypes = $wizard->addType($jobTypes);
         }
         return $jobTypes;
     }
