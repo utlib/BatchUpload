@@ -1,0 +1,415 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Translations for the Batch Uploader Plugin for Omeka "
+"Classic 2.x\n"
+"POT-Creation-Date: 2018-04-02 16:41-0500\n"
+"PO-Revision-Date: 2018-04-02 16:41-0500\n"
+"Last-Translator: Dickson Law <dickson.law@utoronto.ca>\n"
+"Language-Team: University of Toronto Libraries <exhibits@library.utoronto."
+"ca>\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.4\n"
+"X-Poedit-KeywordsList: __;gettext;gettext_noop;plural:1,2\n"
+"X-Poedit-Basepath: /home/developer/BatchUpload\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: BatchUploadPlugin.php:186
+msgid "Batch Upload"
+msgstr ""
+
+#: models/BatchUpload/MappingSet.php:201
+#, php-format
+msgid "Trying to delete non-member mapping %d"
+msgstr ""
+
+#: models/BatchUpload/MappingSet.php:211
+#, php-format
+msgid "Trying to edit non-member mapping %d"
+msgstr ""
+
+#: models/BatchUpload/MappingSet.php:217
+#, php-format
+msgid "Header on mapping row %d must be filled"
+msgstr ""
+
+#: models/BatchUpload/MappingSet.php:273
+msgid "Name must be filled in."
+msgstr ""
+
+#: models/BatchUpload/Job.php:255
+msgid "Name must be filled."
+msgstr ""
+
+#: models/BatchUpload/Job.php:260
+msgid "Target type must be filled."
+msgstr ""
+
+#: views/admin/mapping-sets/browse.php:3
+#: views/admin/mapping-sets/template.php:3 views/admin/mapping-sets/add.php:4
+#: views/admin/mapping-sets/edit.php:4 views/admin/jobs/wizard.php:4
+#: views/admin/jobs/browse.php:4 views/admin/jobs/add.php:5
+msgid "Batch Uploader"
+msgstr ""
+
+#: views/admin/mapping-sets/browse.php:3
+#: views/admin/mapping-sets/browse.php:21 views/admin/shared/nav.php:9
+msgid "Mappings"
+msgstr ""
+
+#: views/admin/mapping-sets/browse.php:10
+msgid "Create New Mapping Template"
+msgstr ""
+
+#: views/admin/mapping-sets/browse.php:20
+#: views/admin/mapping-sets/mapping-sets-form.php:4
+#: views/admin/jobs/browse.php:21
+msgid "Name"
+msgstr ""
+
+#: views/admin/mapping-sets/browse.php:22 views/admin/jobs/browse.php:24
+msgid "Date"
+msgstr ""
+
+#: views/admin/mapping-sets/browse.php:36
+msgid "Edit"
+msgstr ""
+
+#: views/admin/mapping-sets/browse.php:37 views/admin/mapping-sets/edit.php:16
+#: views/admin/jobs/browse.php:51
+#: views/shared/batch_upload_forms/existing_collection/2.php:63
+msgid "Delete"
+msgstr ""
+
+#: views/admin/mapping-sets/browse.php:38
+msgid "CSV Template"
+msgstr ""
+
+#: views/admin/mapping-sets/template.php:3
+msgid "Generate CSV Template"
+msgstr ""
+
+#: views/admin/mapping-sets/template.php:12
+msgid "List Files"
+msgstr ""
+
+#: views/admin/mapping-sets/template.php:13
+msgid ""
+"This mapping set contains one or more file columns. Please indicate all "
+"local files that you plan to upload (if any). A CSV template containing the "
+"names of your files will be generated."
+msgstr ""
+
+#: views/admin/mapping-sets/template.php:26
+#: views/admin/mapping-sets/edit.php:14
+msgid "Save"
+msgstr ""
+
+#: views/admin/mapping-sets/template.php:27
+#: views/admin/mapping-sets/edit.php:15
+#: views/shared/batch_upload_forms/existing_collection/2.php:62
+msgid "Cancel and Return"
+msgstr ""
+
+#: views/admin/mapping-sets/add.php:4
+msgid "Add New Mapping Template"
+msgstr ""
+
+#: views/admin/mapping-sets/add.php:14
+msgid "Add Mapping Set"
+msgstr ""
+
+#: views/admin/mapping-sets/add.php:15
+msgid "Cancel"
+msgstr ""
+
+#: views/admin/mapping-sets/mapping-sets-form.php:7
+msgid "The name of this mapping set."
+msgstr ""
+
+#: views/admin/mapping-sets/mapping-sets-form.php:27
+msgid "Header"
+msgstr ""
+
+#: views/admin/mapping-sets/mapping-sets-form.php:28
+msgid "Order"
+msgstr ""
+
+#: views/admin/mapping-sets/mapping-sets-form.php:29
+msgid "Relationship"
+msgstr ""
+
+#: views/admin/mapping-sets/mapping-sets-form.php:30
+msgid "HTML?"
+msgstr ""
+
+#: views/admin/mapping-sets/edit.php:4
+msgid "Edit Mapping Template"
+msgstr ""
+
+#: views/admin/jobs/browse.php:11
+msgid "Start New Job"
+msgstr ""
+
+#: views/admin/jobs/browse.php:22
+msgid "Progress"
+msgstr ""
+
+#: views/admin/jobs/browse.php:23 libraries/BatchUpload/Form/NewJob.php:30
+msgid "Target"
+msgstr ""
+
+#: views/admin/jobs/browse.php:37
+msgid "Finished"
+msgstr ""
+
+#: views/admin/jobs/browse.php:49
+msgid "Continue"
+msgstr ""
+
+#: views/admin/jobs/add.php:17
+msgid "Start Job"
+msgstr ""
+
+#: views/admin/jobs/add.php:18
+msgid "Are you sure that you want to cancel this Job?"
+msgstr ""
+
+#: views/admin/jobs/add.php:18
+#: views/shared/batch_upload_forms/new_collection/1.php:12
+#: views/shared/batch_upload_forms/existing_collection/1.php:18
+msgid "Cancel Job"
+msgstr ""
+
+#: views/admin/shared/nav.php:5
+msgid "Jobs"
+msgstr ""
+
+#: views/shared/batch_upload_forms/new_collection/1.php:11
+#: views/shared/batch_upload_forms/existing_collection/1.php:17
+#: views/shared/batch_upload_forms/existing_collection/2.php:61
+msgid "Next Step"
+msgstr ""
+
+#: views/shared/batch_upload_forms/existing_collection/3.php:2
+msgid "Please wait..."
+msgstr ""
+
+#: views/shared/batch_upload_forms/existing_collection/4.php:33
+msgid ""
+"You have indicated that there are files associated with your batch upload "
+"job. Please select them now."
+msgstr ""
+
+#: views/shared/batch_upload_forms/existing_collection/4.php:35
+msgid "Select files to upload..."
+msgstr ""
+
+#: views/shared/batch_upload_forms/existing_collection/4.php:42
+msgid "Expected Files"
+msgstr ""
+
+#: views/shared/batch_upload_forms/existing_collection/4.php:51
+msgid "Successful Files"
+msgstr ""
+
+#: views/shared/batch_upload_forms/existing_collection/4.php:57
+msgid "Failed Files"
+msgstr ""
+
+#: views/shared/batch_upload_forms/existing_collection/2.php:5
+msgid "Use Headers?"
+msgstr ""
+
+#: views/shared/batch_upload_forms/existing_collection/2.php:8
+msgid "Whether the first row of the CSV file is a header."
+msgstr ""
+
+#: views/shared/batch_upload_forms/existing_collection/2.php:14
+msgid "Input File"
+msgstr ""
+
+#: views/shared/batch_upload_forms/existing_collection/2.php:17
+msgid "The CSV file containing metadata and file names"
+msgstr ""
+
+#: views/shared/batch_upload_forms/existing_collection/2.php:24
+msgid "Apply Mappings"
+msgstr ""
+
+#: views/shared/batch_upload_forms/existing_collection/2.php:27
+msgid ""
+"Select an existing mapping template here and press \"Apply\" to copy it "
+"below."
+msgstr ""
+
+#: views/shared/batch_upload_forms/existing_collection/2.php:29
+msgid "Select a mapping template..."
+msgstr ""
+
+#: views/shared/batch_upload_forms/existing_collection/2.php:36
+msgid "Apply"
+msgstr ""
+
+#: views/shared/batch_upload_forms/existing_collection/2.php:44
+msgid "Original"
+msgstr ""
+
+#: views/shared/batch_upload_forms/existing_collection/2.php:45
+msgid "Example"
+msgstr ""
+
+#: views/shared/batch_upload_forms/existing_collection/2.php:46
+msgid "Property"
+msgstr ""
+
+#: views/shared/batch_upload_forms/existing_collection/2.php:47
+msgid "HTML"
+msgstr ""
+
+#: views/shared/batch_upload_forms/existing_collection/2.php:53
+msgid "Enter the name of the new mapping template:"
+msgstr ""
+
+#: views/shared/batch_upload_forms/existing_collection/2.php:53
+msgid "Save as New Mapping Template..."
+msgstr ""
+
+#: views/shared/batch_upload_forms/existing_collection/2.php:66
+msgid "Navigate Examples"
+msgstr ""
+
+#: libraries/BatchUpload/Wizard/NewCollection.php:24
+msgid "Create Target Collection"
+msgstr ""
+
+#: libraries/BatchUpload/Wizard/NewCollection.php:56
+#: libraries/BatchUpload/Wizard/ExistingCollection.php:62
+#: libraries/BatchUpload/Wizard/ExistingCollection.php:85
+msgid "Select Target"
+msgstr ""
+
+#: libraries/BatchUpload/Wizard/ExistingCollection.php:100
+msgid "Input Data"
+msgstr ""
+
+#: libraries/BatchUpload/Wizard/ExistingCollection.php:194
+#, php-format
+msgid "Successfully added mapping template \"%s\"!"
+msgstr ""
+
+#: libraries/BatchUpload/Wizard/ExistingCollection.php:234
+#: controllers/MappingSetsController.php:164
+msgid "Special Properties"
+msgstr ""
+
+#: libraries/BatchUpload/Wizard/ExistingCollection.php:235
+msgid "[Unmapped]"
+msgstr ""
+
+#: libraries/BatchUpload/Wizard/ExistingCollection.php:236
+#: controllers/MappingSetsController.php:166
+msgid "Tags"
+msgstr ""
+
+#: libraries/BatchUpload/Wizard/ExistingCollection.php:237
+#: controllers/MappingSetsController.php:167
+msgid "File"
+msgstr ""
+
+#: libraries/BatchUpload/Wizard/ExistingCollection.php:238
+#: controllers/MappingSetsController.php:168
+msgid "Item Type"
+msgstr ""
+
+#: libraries/BatchUpload/Wizard/ExistingCollection.php:239
+#: controllers/MappingSetsController.php:169
+msgid "Collection"
+msgstr ""
+
+#: libraries/BatchUpload/Wizard/ExistingCollection.php:240
+#: controllers/MappingSetsController.php:170
+msgid "Public"
+msgstr ""
+
+#: libraries/BatchUpload/Wizard/ExistingCollection.php:241
+#: controllers/MappingSetsController.php:171
+msgid "Featured"
+msgstr ""
+
+#: libraries/BatchUpload/Wizard/ExistingCollection.php:323
+msgid "Processing Data Rows"
+msgstr ""
+
+#: libraries/BatchUpload/Wizard/ExistingCollection.php:362
+msgid "Supply Files"
+msgstr ""
+
+#: libraries/BatchUpload/Wizard/ExistingCollection.php:399
+msgid "File not expected"
+msgstr ""
+
+#: libraries/BatchUpload/Form/CollectionSelect.php:23
+msgid "Target Collection"
+msgstr ""
+
+#: libraries/BatchUpload/Form/CollectionSelect.php:24
+msgid "Select the collection to import items into."
+msgstr ""
+
+#: libraries/BatchUpload/Form/NewJob.php:23
+msgid "Job Name"
+msgstr ""
+
+#: libraries/BatchUpload/Form/NewJob.php:24
+msgid "The name for this batch upload job."
+msgstr ""
+
+#: libraries/BatchUpload/Form/NewJob.php:31
+msgid "Select where or what to start the upload job for."
+msgstr ""
+
+#: libraries/BatchUpload/Form/CollectionCreate.php:23
+msgid "Collection Name"
+msgstr ""
+
+#: libraries/BatchUpload/Form/CollectionCreate.php:24
+msgid "Name of the new collection to import into."
+msgstr ""
+
+#: libraries/BatchUpload/Application/AbstractWizard.php:137
+#, php-format
+msgid "Step %d of %d"
+msgstr ""
+
+#: controllers/JobsController.php:104
+msgid "There were errors found in your form. Please edit and resubmit."
+msgstr ""
+
+#: controllers/JobsController.php:132 controllers/JobsController.php:159
+#, php-format
+msgid "The job \"%s\" has been completed!"
+msgstr ""
+
+#: controllers/MappingSetsController.php:101
+#, php-format
+msgid "The mapping set \"%s\" was successfully added!"
+msgstr ""
+
+#: controllers/MappingSetsController.php:122
+#, php-format
+msgid "The mapping set \"%s\" was successfully changed!"
+msgstr ""
+
+#: controllers/MappingSetsController.php:140
+#, php-format
+msgid "The mapping set \"%s\" was successfully deleted!"
+msgstr ""
+
+#: controllers/MappingSetsController.php:165
+msgid "<Unmapped>"
+msgstr ""
