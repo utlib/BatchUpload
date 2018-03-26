@@ -4,11 +4,11 @@ jQuery(function() {
         currentRow = null,
         countRow = null,
         hasHeaderChecked = jQuery('#has_headers').is(':checked');
-        
+
     // Hide elements that should appear only after a file is loaded
     jQuery('#phase2').hide();
     jQuery('#example-nav').hide();
-    
+
     // Functions
     var entityMap = {
         '&': '&amp;',
@@ -130,7 +130,7 @@ jQuery(function() {
             }
         });
     }
-    
+
     // Read the CSV when a file is successfully loaded
     jQuery('#csv_file').change(function() {
         jQuery('#phase2').hide();
@@ -151,7 +151,7 @@ jQuery(function() {
             }
         });
     });
-    
+
     // Flip between using headers and not
     jQuery('#has_headers').change(function() {
         hasHeaderChecked = jQuery(this).is(':checked');
@@ -175,7 +175,7 @@ jQuery(function() {
             });
         }
     });
-    
+
     // Navigation buttons
     jQuery('#mapping-goto-first').click(function() {
         currentRow = 0;
@@ -205,7 +205,7 @@ jQuery(function() {
         refreshHeader(csvResults, hasHeaderChecked, currentRow);
         refreshNavigator(csvResults, hasHeaderChecked, currentRow, countRow);
     });
-    
+
     // "Saving as new mapping template" button
     jQuery('#save-new-template').click(function() {
         var jqt = jQuery(this),
@@ -240,7 +240,7 @@ jQuery(function() {
             });
         }
     });
-    
+
     // "Apply" button
     jQuery('#apply-template').click(function() {
         jQuery.ajax({

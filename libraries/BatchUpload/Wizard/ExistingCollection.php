@@ -14,16 +14,16 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
     const SPECIAL_TYPE_COLLECTION = -4;
     const SPECIAL_TYPE_PUBLIC = -5;
     const SPECIAL_TYPE_FEATURED = -6;
-    
+
     // Identify the name slug of the job type and number of steps
     public $job_type = "existing_collection";
     public $job_type_description = "Existing Collection";
     public $steps = 4; // Select target collection, specify metadata, create rows, upload files
-    
+
     /**
      * Hook for what to do when a new job is created.
      * Set the target type to collection.
-     * 
+     *
      * @param BatchUpload_Job $job
      */
     public function newJob($job)
@@ -31,7 +31,7 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
         // Initialize new job target type to Collection
         $job->target_type = "Collection";
     }
-    
+
     /**
      * Filter for changing the value
      * @param array $row
@@ -47,7 +47,7 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
         }
         return $row;
     }
-    
+
     /**
      * Rendering step 1's form for selecting the target collection.
      * @param array $args
@@ -61,7 +61,7 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
         $partialAssigns->set('form', $form);
         $partialAssigns->set('page_title', __("Select Target"));
     }
-    
+
     /**
      * Processing step 1's form for selecting the target collection.
      * @param array $args
@@ -85,7 +85,7 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
             $partialAssigns->set('page_title', __("Select Target"));
         }
     }
-    
+
     /**
      * Rendering step 2's form for mappings.
      * @param array $args
@@ -106,7 +106,7 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
         $partialAssigns->set('available_properties_options', $this->__getAvailablePropertiesOptions($availablePropertiesArray));
         $partialAssigns->set('mapping_sets', get_db()->getTable('BatchUpload_MappingSet')->findAll());
     }
-    
+
     /**
      * Process step 2's submissions.
      * @param array $args
@@ -157,7 +157,7 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
             $this->step2Form($args);
         }
     }
-    
+
     /**
      * Process step 2's potential AJAX calls
      * @param array $args
@@ -223,7 +223,7 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
             }
         }
     }
-    
+
     /**
      * Return a utility array in the form { "Category": {"property_id": "Property Name"}, ... }
      * @return array
@@ -254,7 +254,7 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
         }
         return $properties;
     }
-    
+
     /**
      * Return an associative array for automatic mapping, in the form { "label": "property_id", ... }.
      * @param array|null $availableProperties Utility array in same form returned by __getAvailablePropertiesArray().
@@ -286,7 +286,7 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
         // Done
         return $json;
     }
-    
+
     /**
      * Return a string in HTML that can be inserted between SELECT tags to choose a property.
      * @param array|null $availableProperties Utility array in same form returned by __getAvailablePropertiesArray().
@@ -325,7 +325,7 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
         $partialAssigns->set('refresh_url', admin_url(array('controller' => 'jobs', 'id' => $job->id, 'action' => 'refresh'), 'batchupload_id'));
         $partialAssigns->set('current_step', $job->step);
     }
-    
+
     /**
      * Don't do anything for step 3's processing, a background job is doing it.
      * @param array $args
@@ -334,7 +334,7 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
     {
         $this->step3Form($args);
     }
-    
+
     /**
      * Display the file upload screen for step 4.
      * @param array $args
@@ -363,7 +363,7 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
         $partialAssigns->set('file_rows', $fileRows);
         $partialAssigns->set('processing_path', admin_url(array('id' => $job->id, 'controller' => 'jobs', 'action' => 'ajax'), 'batchupload_id'));
     }
-    
+
     /**
      * Don't do anything for step 4's processing, AJAX is doing it.
      * @param array $args
@@ -372,7 +372,7 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
     {
         $this->step4Form($args);
     }
-    
+
     /**
      * Process AJAX uploads for step 4.
      * @param array $args
@@ -434,7 +434,7 @@ class BatchUpload_Wizard_ExistingCollection extends BatchUpload_Application_Abst
                 'thumbnail' => $insertedFileRecord->hasThumbnail() ? $insertedFileRecord->getWebPath('thumbnails') : '',
                 'size' => $insertedFileRecord->size,
             );
-        }         
+        }
         $response->set('files', $insertedFileEntries);
         $response->set('fails', $failedFiles);
         if ($job->countUploadRows() <= 0)

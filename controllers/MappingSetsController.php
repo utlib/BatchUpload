@@ -2,7 +2,7 @@
 
 /**
  * Controller for mapping sets.
- * 
+ *
  * @package controllers
  */
 class BatchUpload_MappingSetsController extends BatchUpload_Application_AbstractActionController
@@ -13,14 +13,14 @@ class BatchUpload_MappingSetsController extends BatchUpload_Application_Abstract
      */
     private $_ajaxRequiredActions = array(
     );
-    
+
     /**
      * Associative array from action to array of allowed verbs.
      * @var array
      */
     private $_methodRequired = array(
     );
-    
+
     /**
      * Set up the controller.
      */
@@ -28,7 +28,7 @@ class BatchUpload_MappingSetsController extends BatchUpload_Application_Abstract
     {
         $this->_helper->db->setDefaultModelName('BatchUpload_MappingSet');
     }
-    
+
     /**
      * HOOK: Pre-dispatch.
      */
@@ -50,7 +50,7 @@ class BatchUpload_MappingSetsController extends BatchUpload_Application_Abstract
             }
         }
     }
-    
+
     /**
      * Main browse action for reusable mapping sets (i.e. not attached to jobs).
      * GET /batch-upload/mapping-sets/browse
@@ -62,7 +62,7 @@ class BatchUpload_MappingSetsController extends BatchUpload_Application_Abstract
         $select->where('job_id IS NULL');
         $this->view->batch_upload_mapping_sets = $table->fetchObjects($select);
     }
-    
+
     /**
      * Override the default browse order to descending by added date.
      * @return array
@@ -71,7 +71,7 @@ class BatchUpload_MappingSetsController extends BatchUpload_Application_Abstract
     {
         return array('added', 'd');
     }
-    
+
     /**
      * Action for creating mapping templates.
      * GET/POST /batch-upload/mapping-sets/add
@@ -82,7 +82,7 @@ class BatchUpload_MappingSetsController extends BatchUpload_Application_Abstract
         $this->_fillMappingsArray();
         $this->_fillAvailableProperties();
     }
-    
+
     /**
      * Override the redirect after creating a mapping template back to browse.
      */
@@ -90,7 +90,7 @@ class BatchUpload_MappingSetsController extends BatchUpload_Application_Abstract
     {
         $this->_helper->redirector('browse', null, null, array());
     }
-    
+
     /**
      * Override the success message after creating a mapping template.
      * @param Record $record The record being created.
@@ -100,7 +100,7 @@ class BatchUpload_MappingSetsController extends BatchUpload_Application_Abstract
     {
         return __('The mapping set "%s" was successfully added!', $record->name);
     }
-    
+
     /**
      * Action for editing mapping templates.
      * GET/POST /batch-upload/mapping-sets/edit
@@ -111,7 +111,7 @@ class BatchUpload_MappingSetsController extends BatchUpload_Application_Abstract
         $this->_fillMappingsArray();
         $this->_fillAvailableProperties();
     }
-    
+
     /**
      * Override the success message after editing a mapping template.
      * @param Record $record The record being edited.
@@ -121,7 +121,7 @@ class BatchUpload_MappingSetsController extends BatchUpload_Application_Abstract
     {
         return __('The mapping set "%s" was successfully changed!', $record->name);
     }
-    
+
     /**
      * Override the redirect after editing a mapping template back to browse.
      */
@@ -129,7 +129,7 @@ class BatchUpload_MappingSetsController extends BatchUpload_Application_Abstract
     {
         $this->_helper->redirector('browse', null, null, array());
     }
-    
+
     /**
      * Override the success message after deleting a mapping template.
      * @param Record $record The record being deleted.
@@ -139,7 +139,7 @@ class BatchUpload_MappingSetsController extends BatchUpload_Application_Abstract
     {
         return __('The mapping set "%s" was successfully deleted!', $record->name);
     }
-    
+
     /**
      * Populate the view's list of mappings, in array form.
      */
@@ -154,7 +154,7 @@ class BatchUpload_MappingSetsController extends BatchUpload_Application_Abstract
             $this->view->mappings_array = $this->view->batch_upload_mapping_set->getMappingsArray();
         }
     }
-    
+
     /**
      * Populate the view's list of available properties.
      */
@@ -184,7 +184,7 @@ class BatchUpload_MappingSetsController extends BatchUpload_Application_Abstract
         }
         $this->view->available_properties = $properties;
     }
-    
+
     /**
      * Action for downloading CSV files from a mapping template.
      * GET/POST /batch-upload/mapping-sets/template/:id
@@ -202,7 +202,7 @@ class BatchUpload_MappingSetsController extends BatchUpload_Application_Abstract
             {
                 $fileMappings[] = $mapping;
             }
-        } 
+        }
         // GET: Render file spec form
         $request = $this->getRequest();
         if ($request->isGet())
@@ -225,7 +225,7 @@ class BatchUpload_MappingSetsController extends BatchUpload_Application_Abstract
             $csv = $mappingSet->getCsvTemplate($fileSpecs);
             $this->getResponse()->setHeader('Content-Disposition', 'attachment; filename=' . rawurlencode($mappingSet->name) . '.csv');
             $this->respondWithRaw($csv, 200, 'text/csv; charset=utf-8');
-            
+
         }
         // Other verbs: Don't handle
         else

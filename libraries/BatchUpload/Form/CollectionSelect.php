@@ -2,7 +2,7 @@
 
 /**
  * Form used in step #1 of the wizard for importing to an existing collection.
- * 
+ *
  * @package Form
  */
 class BatchUpload_Form_CollectionSelect extends Omeka_Form

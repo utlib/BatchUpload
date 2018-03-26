@@ -2,7 +2,7 @@
 
 /**
  * Background job for generating rows from submitted metadata gathered from CSV.
- * 
+ *
  * @package Job
  */
 class BatchUpload_Job_GenerateRows extends Omeka_Job_AbstractJob {
@@ -11,19 +11,19 @@ class BatchUpload_Job_GenerateRows extends Omeka_Job_AbstractJob {
      * @var int
      */
     private $_jobId;
-    
+
     /**
      * CSV data in [[col0...col(n-1)], ...] form
      * @var array
      */
     private $_csvData;
-    
+
     /**
      * Metadata in [{header: ?, property: ?, `html: `}, ...] form (backticks = optional)
      * @var array
      */
     private $_metadataPostData;
-    
+
     /**
      * Initialize this background job.
      * @param array $options
@@ -35,7 +35,7 @@ class BatchUpload_Job_GenerateRows extends Omeka_Job_AbstractJob {
         debug("Processing batch upload job #{$this->_jobId}}");
         debug(count($this->_csvData) . " CSV rows");
     }
-    
+
     /**
      * Main runnable method
      */
@@ -54,7 +54,7 @@ class BatchUpload_Job_GenerateRows extends Omeka_Job_AbstractJob {
             }
         }
     }
-    
+
     /**
      * Core running part.
      */
@@ -212,7 +212,7 @@ class BatchUpload_Job_GenerateRows extends Omeka_Job_AbstractJob {
             $job->save();
         }
     }
-    
+
     /**
      * Utility for finding a collection by name.
      * @param Omeka_Db $db

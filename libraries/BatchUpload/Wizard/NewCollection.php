@@ -9,7 +9,7 @@ class BatchUpload_Wizard_NewCollection extends BatchUpload_Wizard_ExistingCollec
     public $job_type = "new_collection";
     public $job_type_description = "New Collection";
     public $steps = 4;
-    
+
     /**
      * Rendering step 1's form for creating the target collection.
      * @param array $args
@@ -23,7 +23,7 @@ class BatchUpload_Wizard_NewCollection extends BatchUpload_Wizard_ExistingCollec
         $partialAssigns->set('form', $form);
         $partialAssigns->set('page_title', __("Create Target Collection"));
     }
-    
+
     /**
      * Processing step 1's form for creating the target collection.
      * @param array $args

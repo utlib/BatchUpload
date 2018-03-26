@@ -2,14 +2,14 @@
 
 /**
  * Abstract template for CRUD controllers.
- * 
+ *
  * @package BatchUpload
  */
 abstract class BatchUpload_Application_AbstractActionController extends Omeka_Controller_AbstractActionController
 {
     /**
      * Return a database selector for the given model, with current pagination parameters.
-     * 
+     *
      * @param string $modelName Name of the model
      * @return Omeka_Db_Select
      */
@@ -25,10 +25,10 @@ abstract class BatchUpload_Application_AbstractActionController extends Omeka_Co
         $this->_helper->db->applyPagination($select, $recordsPerPage, $currentPage);
         return $select;
     }
-    
+
     /**
      * Return a list of models with current pagination parameters.
-     * 
+     *
      * @param string $modelName Name of the model
      * @return Omeka_Record_AbstractRecord[]
      */
@@ -37,10 +37,10 @@ abstract class BatchUpload_Application_AbstractActionController extends Omeka_Co
         $select = $this->getPaginatedModelSelect($modelName);
         return $this->_helper->db->getTable($modelName)->fetchObjects($select);
     }
-    
+
     /**
      * Respond with JSON data (no layout).
-     * 
+     *
      * @param array $jsonData JSON data in nested array form
      * @param integer $status The HTTP response code
      */
@@ -57,7 +57,7 @@ abstract class BatchUpload_Application_AbstractActionController extends Omeka_Co
 
     /**
      * Respond with raw data.
-     * 
+     *
      * @param string $data Response data
      * @param integer $status The HTTP response code
      * @param string $mime The MIME type
@@ -76,7 +76,7 @@ abstract class BatchUpload_Application_AbstractActionController extends Omeka_Co
     /**
      * Encodes the argument in JSON.
      * Adds the unescaped slashes and unicode argument on PHP 5.4.0+
-     * 
+     *
      * @param mixed $mixed
      * @return array
      */
@@ -86,10 +86,10 @@ abstract class BatchUpload_Application_AbstractActionController extends Omeka_Co
             ? \json_encode($mixed)
             : \json_encode($mixed, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
-    
+
     /**
      * Decodes the given JSON string to an associative array.
-     * 
+     *
      * @param string $str
      * @return array
      */
@@ -97,10 +97,10 @@ abstract class BatchUpload_Application_AbstractActionController extends Omeka_Co
     {
         return \json_decode($str, false);
     }
-    
+
     /**
      * Run validation on a given form with passed parameters and carry over data if invalid.
-     * 
+     *
      * @param Omeka_Form $form The form to validate.
      * @param bool $validOnly Whether to carry only valid values.
      * @param array $data The submitted data. Defaults to $_POST if unspecified.
@@ -116,7 +116,7 @@ abstract class BatchUpload_Application_AbstractActionController extends Omeka_Co
         // Run only on POST and PUT (submissions)
         if ($this->getRequest()->isPost() || $this->getRequest()->isPut())
         {
-            // Carry data only 
+            // Carry data only
             if ($validity = $form->isValid($data))
             {
                 $options = $validOnly ? $form->getValidValues($data) : $form->getValues();

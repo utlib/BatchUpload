@@ -8,7 +8,7 @@
             <input type="text" name="name" id="name" value="<?php echo html_escape($batch_upload_mapping_set->name); ?>">
         </div>
     </div>
-   
+
     <?php
     $selectContent = '';
     foreach ($available_properties as $elementSetName => $elements)

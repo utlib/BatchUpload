@@ -2,7 +2,7 @@
 
 /**
  * Abstract template for import wizards.
- * 
+ *
  * @package BatchUpload
  */
 abstract class BatchUpload_Application_AbstractWizard
@@ -12,19 +12,19 @@ abstract class BatchUpload_Application_AbstractWizard
      * @var string
      */
     public $job_type = "abstract_wizard";
-    
+
     /**
      * Human-readable name of the job type.
-     * @var string 
+     * @var string
      */
     public $job_type_description = "";
-    
+
     /**
      * Number of steps in the wizard's workflow.
      * @var int
      */
     public $steps = 1;
-    
+
     /**
      * Attach processing properties of this wizard to hooks and filters.
      */
@@ -37,7 +37,7 @@ abstract class BatchUpload_Application_AbstractWizard
         add_plugin_hook("batch_upload_{$jobTypeSlug}_step_ajax", array($this, '_stepAjax'));
         add_filter("batch_upload_{$jobTypeSlug}_job_row", array($this, "jobRow"));
     }
-    
+
     /**
      * Registering the current job type in the given batch_upload_register_job_type filter argument array.
      * @param array $args
@@ -48,7 +48,7 @@ abstract class BatchUpload_Application_AbstractWizard
         $args[$this->job_type] = __($this->job_type_description);
         return $args;
     }
-    
+
     /**
      * Delegate new-job hook to overridden newJob() method.
      * @param array $args
@@ -57,7 +57,7 @@ abstract class BatchUpload_Application_AbstractWizard
     {
         $this->newJob($args["job"]);
     }
-    
+
     /**
      * Delegate form hook to stepNForm methods (N is the current step).
      * @param array $args
@@ -70,7 +70,7 @@ abstract class BatchUpload_Application_AbstractWizard
             $this->$methodName($args);
         }
     }
-    
+
     /**
      * Delegate process hook to stepNProcess methods (N is the current step).
      * If the delegated method is not implemented, automatically advance step.
@@ -92,7 +92,7 @@ abstract class BatchUpload_Application_AbstractWizard
             $args['job']->save();
         }
     }
-    
+
     /**
      * Delegate ajax hook to stepNAjax methods (N is the current step).
      * @param array $args
@@ -105,7 +105,7 @@ abstract class BatchUpload_Application_AbstractWizard
             $this->$methodName($args);
         }
     }
-    
+
     /**
      * Get the default wizard type description.
      * @return string
@@ -114,7 +114,7 @@ abstract class BatchUpload_Application_AbstractWizard
     {
         return empty($this->job_type_description) ? Inflector::humanize($this->job_type) : $this->job_type_description;
     }
-    
+
     /**
      * Placeholder for action after creating a new job of this kind.
      * @param BatchUpload_Job $job
@@ -123,7 +123,7 @@ abstract class BatchUpload_Application_AbstractWizard
     {
         debug("Starting job: {$job->name}");
     }
-    
+
     /**
      * Placeholder for filling a table row in browse for a job of this kind.
      * @param array $row
@@ -139,10 +139,10 @@ abstract class BatchUpload_Application_AbstractWizard
         $row['target'] = __($this->job_type_description);
         return $row;
     }
-    
+
     /**
      * Run validation on a given form with passed parameters and carry over data if invalid.
-     * 
+     *
      * @param Omeka_Form $form The form to validate.
      * @param bool $validOnly Whether to carry only valid values.
      * @param array $data The submitted data. Defaults to $_POST if unspecified.
@@ -155,7 +155,7 @@ abstract class BatchUpload_Application_AbstractWizard
         {
             $data = $_POST;
         }
-        // Carry data only 
+        // Carry data only
         if ($validity = $form->isValid($data))
         {
             $options = $validOnly ? $form->getValidValues($data) : $form->getValues();

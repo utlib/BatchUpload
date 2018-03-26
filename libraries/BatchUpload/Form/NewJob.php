@@ -2,7 +2,7 @@
 
 /**
  * Form helper for adding a new job.
- * 
+ *
  * @package Form
  */
 class BatchUpload_Form_NewJob extends Omeka_Form

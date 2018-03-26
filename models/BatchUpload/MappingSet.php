@@ -2,57 +2,57 @@
 
 /**
  * A collection of property mappings in a set.
- * 
+ *
  * @package models
  */
 class BatchUpload_MappingSet extends Omeka_Record_AbstractRecord
 {
     /**
      * The name of this mapping set.
-     * 
+     *
      * @var string
      */
     public $name;
-    
+
     /**
      * The ID of the batch upload job that this mapping set is associated with.
      * If left null, it is a template.
-     * 
+     *
      * @var int|null
      */
     public $job_id;
-    
+
     /**
      * The date this mapping set was added.
      *
      * @var string
      */
     public $added;
-    
+
     /**
      * The date this mapping set was modified.
      *
      * @var string
      */
     public $modified;
-    
+
     /**
      * The ID of the user who owns this mapping set.
-     * 
+     *
      * @var int
      */
     public $owner_id;
-    
+
     /**
      * Listing of cacheable association method calls.
-     * 
+     *
      * @var array
      */
     protected $_related = array(
         'job' => 'getJob',
         'mappings' => 'getMappings',
     );
-    
+
     /**
      * Initialize the mixins.
      */
@@ -60,7 +60,7 @@ class BatchUpload_MappingSet extends Omeka_Record_AbstractRecord
     {
         $this->_mixins[] = new Mixin_Owner($this);
     }
-    
+
     /**
      * Return the job that this mapping belongs to (null for no job, i.e. it is a template).
      * @return BatchUpload_Job|null
@@ -69,7 +69,7 @@ class BatchUpload_MappingSet extends Omeka_Record_AbstractRecord
     {
         return ($this->job_id === null || $this->id === null) ? null : get_record_by_id('BatchUpload_Job', $this->job_id);
     }
-    
+
     /**
      * Return an array of this mapping set's mappings.
      * @return BatchUpload_Mapping[]
@@ -78,7 +78,7 @@ class BatchUpload_MappingSet extends Omeka_Record_AbstractRecord
     {
         return ($this->id === null) ? array() : $this->_db->getTable('BatchUpload_Mapping')->findBy(array('mapping_set_id' => $this->id));
     }
-    
+
     /**
      * Return the number of mappings contained in this mapping set.
      * @return int
@@ -87,7 +87,7 @@ class BatchUpload_MappingSet extends Omeka_Record_AbstractRecord
     {
         return ($this->id === null) ? 0 : $this->_db->getTable('BatchUpload_Mapping')->count(array('mapping_set_id' => $this->id));
     }
-    
+
     /**
      * Return an array-only representation of the mappings in this mapping set. For use with forms.
      * Format: [{header, order, property, html}, {header, order, property, html}, ...]
@@ -117,7 +117,7 @@ class BatchUpload_MappingSet extends Omeka_Record_AbstractRecord
         }
         return $mappingsArray;
     }
-    
+
     /**
      * Return a CSV template string for this mapping set.
      * @param array $columnValues File names in the form { mapping_id: ["filename", "filename", ...], ... }
@@ -127,7 +127,7 @@ class BatchUpload_MappingSet extends Omeka_Record_AbstractRecord
     {
         // Get mappings in this set
         $mappings = $this->getMappings();
-        
+
         // Build CSV rows
         // The header
         $csvRows = array(array());
@@ -160,7 +160,7 @@ class BatchUpload_MappingSet extends Omeka_Record_AbstractRecord
             }
             $csvRows[] = $row;
         }
-        
+
         // Capture output of fputcsv()
         $memory = fopen('php://memory', 'w');
         foreach ($csvRows as $csvRow)
@@ -170,11 +170,11 @@ class BatchUpload_MappingSet extends Omeka_Record_AbstractRecord
         fseek($memory, 0);
         $csv = stream_get_contents($memory);
         fclose($memory);
-        
+
         // Return
         return $csv;
     }
-    
+
     /**
      * Before-save hook.
      * @param array $args
@@ -219,7 +219,7 @@ class BatchUpload_MappingSet extends Omeka_Record_AbstractRecord
             }
         }
     }
-    
+
     /**
      * After-save hook.
      * @param array $args
@@ -248,9 +248,9 @@ class BatchUpload_MappingSet extends Omeka_Record_AbstractRecord
                 {
                     $mapping = ($rowId !== null) ? $mappingTable->find($rowId) : new BatchUpload_Mapping();
                     $filteredPost = array_intersect_key($mappingRow, array(
-                        'header' => true, 
-                        'order' => true, 
-                        'property' => true, 
+                        'header' => true,
+                        'order' => true,
+                        'property' => true,
                         'html' => true
                     ));
                     $mapping->setPostData(array_merge($filteredPost, array(
@@ -261,7 +261,7 @@ class BatchUpload_MappingSet extends Omeka_Record_AbstractRecord
             }
         }
     }
-    
+
     /**
      * Validation hook.
      */

@@ -2,7 +2,7 @@
 
 /**
  * Controller for batch upload jobs.
- * 
+ *
  * @package controllers
  */
 class BatchUpload_JobsController extends BatchUpload_Application_AbstractActionController
@@ -12,13 +12,13 @@ class BatchUpload_JobsController extends BatchUpload_Application_AbstractActionC
      * @var string
      */
     const VIEW_STEM = 'batch_upload_forms';
-    
+
     /**
      * The number of records to display per page.
      * @var int
      */
     protected $_browseRecordsPerPage = self::RECORDS_PER_PAGE_SETTING;
-    
+
     /**
      * Actions requiring an AJAX response.
      * @var string[]
@@ -33,7 +33,7 @@ class BatchUpload_JobsController extends BatchUpload_Application_AbstractActionC
      */
     private $_methodRequired = array(
     );
-    
+
     /**
      * Set up the controller.
      */
@@ -41,7 +41,7 @@ class BatchUpload_JobsController extends BatchUpload_Application_AbstractActionC
     {
         $this->_helper->db->setDefaultModelName('BatchUpload_Job');
     }
-    
+
     /**
      * HOOK: Pre-dispatch.
      */
@@ -63,7 +63,7 @@ class BatchUpload_JobsController extends BatchUpload_Application_AbstractActionC
             }
         }
     }
-    
+
     /**
      * Main index action.
      * GET /batch-upload/jobs
@@ -72,7 +72,7 @@ class BatchUpload_JobsController extends BatchUpload_Application_AbstractActionC
     {
         $this->_helper->redirector('browse', null, null, array());
     }
-    
+
     /**
      * Job listings action.
      * GET /batch-upload/jobs/browse
@@ -82,7 +82,7 @@ class BatchUpload_JobsController extends BatchUpload_Application_AbstractActionC
         $this->view->availableJobTypes = apply_filters('batch_upload_register_job_type', array());
         parent::browseAction();
     }
-    
+
     /**
      * Override the default sorting order to descending by added date.
      * @return array
@@ -91,7 +91,7 @@ class BatchUpload_JobsController extends BatchUpload_Application_AbstractActionC
     {
         return array('added', 'd');
     }
-    
+
     /**
      * Adding a new job.
      * GET/POST /batch-upload/jobs/add
@@ -106,7 +106,7 @@ class BatchUpload_JobsController extends BatchUpload_Application_AbstractActionC
         }
         parent::addAction();
     }
-    
+
     /**
      * Override the post-add redirection.
      * Go to browse if the job finishes right away, otherwise show the wizard.
@@ -116,7 +116,7 @@ class BatchUpload_JobsController extends BatchUpload_Application_AbstractActionC
     {
         $this->_helper->redirector($record->isFinished() ? 'browse' : 'wizard', null, null, array('id' => $record->id));
     }
-    
+
     /**
      * Display and process the wizard interface.
      * GET shows the form; POST processes form submissions.
@@ -171,7 +171,7 @@ class BatchUpload_JobsController extends BatchUpload_Application_AbstractActionC
             $this->view->page_title = $partialAssigns->get('page_title');
         }
     }
-    
+
     /**
      * Similar to wizard, except it responds exclusively in JSON.
      * Useful for implementing asynchronous processes.
@@ -214,7 +214,7 @@ class BatchUpload_JobsController extends BatchUpload_Application_AbstractActionC
         }
         $this->respondWithJson($response->getData(), $http->get('status'));
     }
-    
+
     /**
      * Utility action for providing information on the given job.
      * Can be polled to detect change in step or finished status.
@@ -228,7 +228,7 @@ class BatchUpload_JobsController extends BatchUpload_Application_AbstractActionC
         }
         $this->respondWithJson($batch_upload_job);
     }
-    
+
     /**
      * Utility action for refreshing the wizard.
      * Needed to silence the POST resubmission confirmation message.

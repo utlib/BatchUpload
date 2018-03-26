@@ -1,14 +1,14 @@
 <?php
 /**
  * The main plugin class.
- * 
+ *
  * @package BatchUpload
  */
 class BatchUploadPlugin extends Omeka_Plugin_AbstractPlugin
 {
     /**
      * List of hooks used by this plugin.
-     * 
+     *
      * @var array
      */
     protected $_hooks = array(
@@ -22,14 +22,14 @@ class BatchUploadPlugin extends Omeka_Plugin_AbstractPlugin
 
     /**
      * List of filters used by this plugin.
-     * 
+     *
      * @var array
      */
     protected $_filters = array(
         'admin_navigation_main',
         'batch_upload_register_job_type',
     );
-    
+
     protected $_supported_job_types = array(
         'new_collection',
         'existing_collection',
@@ -84,7 +84,7 @@ class BatchUploadPlugin extends Omeka_Plugin_AbstractPlugin
             FOREIGN KEY (`mapping_set_id`) REFERENCES `{$prefix}batch_upload_mapping_sets`(`id`) ON DELETE CASCADE
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;");
     }
-    
+
     /**
      * HOOK: Uninstalling the plugin.
      */
@@ -100,7 +100,7 @@ class BatchUploadPlugin extends Omeka_Plugin_AbstractPlugin
 
     /**
      * HOOK: Upgrading the plugin.
-     * 
+     *
      * Run migrations in version ascending order, starting from the last unrun migration.
      */
     public function hookUpgrade($args)
@@ -134,7 +134,7 @@ class BatchUploadPlugin extends Omeka_Plugin_AbstractPlugin
             }
         }
     }
-    
+
     /**
      * HOOK: Initialization. Add wizard integrations.
      */
@@ -147,21 +147,21 @@ class BatchUploadPlugin extends Omeka_Plugin_AbstractPlugin
             $wizard->integrate();
         }
     }
-    
+
     /**
      * HOOK: Defining routes.
-     * 
+     *
      * @param array $args
      */
     public function hookDefineRoutes($args)
     {
         $args['router']->addConfig(new Zend_Config_Ini(dirname(__FILE__) . '/routes.ini', 'routes'));
     }
-    
+
     /**
      * HOOK: After batch upload job is saved.
      * Run the "new job" hook to initialize data in the job.
-     * 
+     *
      * @param array $args
      */
     public function hookAfterSaveBatchUploadJob($args)
@@ -173,10 +173,10 @@ class BatchUploadPlugin extends Omeka_Plugin_AbstractPlugin
             $batch_upload_job->save();
         }
     }
-    
+
     /**
      * FILTER: Add entry to admin navigation menu.
-     * 
+     *
      * @param array $nav
      * @return array
      */
@@ -188,10 +188,10 @@ class BatchUploadPlugin extends Omeka_Plugin_AbstractPlugin
         );
         return $nav;
     }
-    
+
     /**
      * FILTER: Register job types available to this plugin.
-     * 
+     *
      * @param array $jobTypes
      * @return array
      */

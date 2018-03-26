@@ -11,7 +11,7 @@ echo flash();
 <?php endif; ?>
 
 <?php echo pagination_links(); ?>
-    
+
 <table id="mapping-sets">
     <thead>
         <tr>
@@ -44,7 +44,7 @@ echo flash();
 </table>
 
 <?php echo pagination_links(); ?>
-    
+
 <?php
 echo foot();
 ?>

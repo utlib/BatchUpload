@@ -7,7 +7,7 @@
 class BatchUpload_Application_DataContainer implements JsonSerializable
 {
     protected $_data;
-    
+
     /**
      * Constructor.
      * @param array $data
@@ -16,7 +16,7 @@ class BatchUpload_Application_DataContainer implements JsonSerializable
     {
         $this->_data = $data;
     }
-    
+
     /**
      * Implementation of JsonSerializable.
      * @return array
@@ -25,7 +25,7 @@ class BatchUpload_Application_DataContainer implements JsonSerializable
     {
         return json_encode($this->_data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
-    
+
     /**
      * Return whether a value is stored under the provided key.
      * @param string $key
@@ -35,7 +35,7 @@ class BatchUpload_Application_DataContainer implements JsonSerializable
     {
         return isset($this->_data[$key]);
     }
-    
+
     /**
      * Return a stored value.
      * @param string $key
@@ -45,7 +45,7 @@ class BatchUpload_Application_DataContainer implements JsonSerializable
     {
         return $this->_data[$key];
     }
-    
+
     /**
      * Store a value.
      * @param string $key
@@ -55,7 +55,7 @@ class BatchUpload_Application_DataContainer implements JsonSerializable
     {
         $this->_data[$key] = $value;
     }
-    
+
     /**
      * Unset a value.
      * @param string $key
@@ -66,7 +66,7 @@ class BatchUpload_Application_DataContainer implements JsonSerializable
         $popped = $this->_data[$key];
         unset($popped);
     }
-    
+
     /**
      * Return the internal data array.
      * @return array
