@@ -154,6 +154,12 @@ class BatchUpload_JobsController extends BatchUpload_Application_AbstractActionC
                     'post' => $_POST,
                     'files' => $_FILES,
                 ));
+                if ($batch_upload_job->isFinished())
+                {
+                    $this->_helper->flashMessenger(__('The job "%s" has been completed!', $batch_upload_job->name), 'success');
+                    $this->_helper->redirector('browse', null, null, array());
+                    return;
+                }
             }
             // Form render: Fire the step-form hook
             if ($request->isGet() || $batch_upload_job->step != $oldStep)
