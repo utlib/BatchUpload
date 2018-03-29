@@ -142,6 +142,7 @@ abstract class BatchUpload_Application_AbstractWizard
 
     /**
      * Run validation on a given form with passed parameters and carry over data if invalid.
+     * This clears file fields in the process. Please finish reading/validating files before calling this!
      *
      * @param Omeka_Form $form The form to validate.
      * @param bool $validOnly Whether to carry only valid values.
