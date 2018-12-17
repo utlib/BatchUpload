@@ -45,6 +45,7 @@
                             <th><?php echo __("Example"); ?></th>
                             <th><?php echo __("Property"); ?></th>
                             <th><?php echo __("HTML"); ?></th>
+                            <th><?php echo __("Separator"); ?></th>
                         </tr>
                     </thead>
                     <tbody>

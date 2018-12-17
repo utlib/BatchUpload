@@ -7,6 +7,12 @@
  */
 class BatchUpload_Job_GenerateRows extends Omeka_Job_AbstractJob {
     /**
+     * The default internal separator for column values.
+     * @var string
+     */
+    protected $_separator = ';';
+    
+    /**
      * The BatchUpload_Job ID that this background job is running for.
      * @var int
      */
@@ -91,6 +97,7 @@ class BatchUpload_Job_GenerateRows extends Omeka_Job_AbstractJob {
             {
                 // Find corresponding metadata key
                 $k = $this->_metadataPostData[$i]['property'];
+                $internalSeparator = empty($this->_metadataPostData[$i]['separator']) ? $this->_separator : $this->_metadataPostData[$i]['separator'];
                 // Discard if it is property 0 (unmapped) or its value is empty:
                 if (empty($k) || $k == BatchUpload_Wizard_ExistingCollection::SPECIAL_TYPE_UNMAPPED || empty(trim($v)))
                 {
@@ -102,12 +109,20 @@ class BatchUpload_Job_GenerateRows extends Omeka_Job_AbstractJob {
                     // If it starts with http: or https:, queue it as a file
                     if (substr($v, 0, 7) == 'http://' || substr($v, 0, 8) == 'https://')
                     {
-                        $urls[] = $v;
+                        $vurls = explode($internalSeparator, $v);
+                        foreach ($vurls as $vurl)
+                        {
+                            $urls[] = trim($vurl);
+                        }
                     }
                     // Otherwise, record it as an upload
                     else
                     {
-                        $uploads[] = $v;
+                        $vuploads = explode($internalSeparator, $v);
+                        foreach ($vuploads as $vupload)
+                        {
+                            $uploads[] = trim($vupload);
+                        }
                         // This job stills needs uploading
                         $needsUpload = true;
                     }
@@ -170,10 +185,14 @@ class BatchUpload_Job_GenerateRows extends Omeka_Job_AbstractJob {
                     {
                         $metadata[$tentativeElementSet->name][$tentativeElement->name] = array();
                     }
-                    $metadata[$tentativeElementSet->name][$tentativeElement->name][] = array(
-                        'text' => $v,
-                        'html' => isset($this->_metadataPostData[$i]['html']),
-                    );
+                    $texts = explode($internalSeparator, $v);
+                    foreach ($texts as $text)
+                    {
+                        $metadata[$tentativeElementSet->name][$tentativeElement->name][] = array(
+                            'text' => trim($text),
+                            'html' => isset($this->_metadataPostData[$i]['html']),
+                        );
+                    }
                 }
             }
             // Create the item with as much information as possible
