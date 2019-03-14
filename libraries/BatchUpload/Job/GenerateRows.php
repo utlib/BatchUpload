@@ -201,6 +201,7 @@ class BatchUpload_Job_GenerateRows extends Omeka_Job_AbstractJob {
             // If there are uploads, create a job data row with { "file": "str", "fileid": null, "order": int, "item": int }
             if (!empty($uploads))
             {
+                $uploads = array_filter($uploads); //filter out empty file uploads created through separation
                 foreach ($uploads as $uploadNum => $upload)
                 {
                     $newJobRow = new BatchUpload_Row();
