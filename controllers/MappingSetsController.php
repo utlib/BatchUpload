@@ -125,7 +125,7 @@ class BatchUpload_MappingSetsController extends BatchUpload_Application_Abstract
     /**
      * Override the redirect after editing a mapping template back to browse.
      */
-    protected function _redirectAfterEdit()
+    protected function _redirectAfterEdit($record)
     {
         $this->_helper->redirector('browse', null, null, array());
     }
