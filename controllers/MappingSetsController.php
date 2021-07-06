@@ -86,7 +86,7 @@ class BatchUpload_MappingSetsController extends BatchUpload_Application_Abstract
     /**
      * Override the redirect after creating a mapping template back to browse.
      */
-    protected function _redirectAfterAdd()
+    protected function _redirectAfterAdd($record)
     {
         $this->_helper->redirector('browse', null, null, array());
     }
