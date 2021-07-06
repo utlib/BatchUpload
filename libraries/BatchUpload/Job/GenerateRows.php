@@ -10,7 +10,7 @@ class BatchUpload_Job_GenerateRows extends Omeka_Job_AbstractJob {
      * The default internal separator for column values.
      * @var string
      */
-    protected $_separator = ';';
+    protected $_separator = '^^';
     
     /**
      * The BatchUpload_Job ID that this background job is running for.

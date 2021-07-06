@@ -44,6 +44,7 @@ jQuery(function() {
         var jqtbody = jQuery('#metadata-table tbody'),
             options = jQuery('#metadata-table').data('selectcontent'),
             premaps = jQuery('#metadata-table').data('shortcutmappings'),
+            separator = escapeHtml(jQuery('#metadata-table').data('separator')),
             i = 0;
         jqtbody.html('');
         if (papaData.data.length > 0) {
@@ -60,7 +61,7 @@ jQuery(function() {
                         _vs = escapeHtml(v.slice(0, maxWidth)) + (v.length > maxWidth ? '&hellip;' : ''),
                         _k = escapeHtml(k),
                         _v = escapeHtml(v);
-                    jqtbody.append('<tr><td>' + _ks + '</td><td>' + _vs + '</td><td><select name="metadata[' + i + '][property]">' + options + '</select></td><td><input type="checkbox" name="metadata[' + i + '][html]"><input type="hidden" name="metadata[' + i + '][header]" value="' + _k + '"></td><td><input type="text" name="metadata[' + i + '][separator]" value=";"></td></tr>');
+                    jqtbody.append('<tr><td>' + _ks + '</td><td>' + _vs + '</td><td><select name="metadata[' + i + '][property]">' + options + '</select></td><td><input type="checkbox" name="metadata[' + i + '][html]"><input type="hidden" name="metadata[' + i + '][header]" value="' + _k + '"></td><td><input type="text" name="metadata[' + i + '][separator]" value="' + separator + '" size="2"></td></tr>');
                     if (premaps.hasOwnProperty(k)) {
                         jqtbody.find('select[name="metadata[' + i + '][property]"]').val(premaps[k]);
                     }
@@ -70,7 +71,7 @@ jQuery(function() {
                 jQuery.each(papaData.data[0], function(_, v) {
                     var _vs = escapeHtml(v.slice(0, maxWidth)) + (v.length > maxWidth ? '&hellip;' : ''),
                         _v = escapeHtml(v);
-                    jqtbody.append('<tr><td>[' + (i+1) + ']</td><td>' + _vs + '</td><td><select name="metadata[' + i + '][property]">' + options + '</select></td><td><input type="checkbox" name="metadata[' + i + '][html]"><input type="hidden" name="metadata[' + i + '][header]" value="' + (i+1) + '"></td><td><input type="text" name="metadata[' + i + '][separator]" value=";"></td></tr>');
+                    jqtbody.append('<tr><td>[' + (i+1) + ']</td><td>' + _vs + '</td><td><select name="metadata[' + i + '][property]">' + options + '</select></td><td><input type="checkbox" name="metadata[' + i + '][html]"><input type="hidden" name="metadata[' + i + '][header]" value="' + (i+1) + '"></td><td><input type="text" name="metadata[' + i + '][separator]" value="' + separator + '" size="2"></td></tr>');
                     i++;
                 });
             }
