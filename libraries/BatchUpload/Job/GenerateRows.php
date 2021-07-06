@@ -46,7 +46,8 @@ class BatchUpload_Job_GenerateRows extends Omeka_Job_AbstractJob {
         } catch (Exception $ex) {
             // debug($ex->getMessage());
             // debug($ex->getTraceAsString());
-            $job = get_record_by_id('BatchUpload_Job', $this->_jobId);
+            $db = get_db();
+            $job = $db->getTable('BatchUpload_Job')->find($this->_jobId);
             if ($job)
             {
                 $job->step--;
@@ -136,7 +137,29 @@ class BatchUpload_Job_GenerateRows extends Omeka_Job_AbstractJob {
                             break;
                         case BatchUpload_Wizard_ExistingCollection::SPECIAL_TYPE_COLLECTION:
                             $tentativeCollection = $this->__getCollectionByName($db, $v);
-                            if (!empty($tentativeCollection))
+                            // Create new collection if not already exists
+                            if (empty($tentativeCollection))
+                            {
+                                $newCollection = insert_collection(
+                                    array(
+                                        'public' => false,
+                                        'featured' => false
+                                    ), array(
+                                        'Dublin Core' => array(
+                                            'Title' => array(
+                                                array(
+                                                    'text' => $v,
+                                                    'html' => isset($this->_metadataPostData[$i]['html'])
+                                                )
+                                            )
+                                        )
+                                    )
+                                );
+                                $newCollection->save();
+                                $specialProperties['collection_id'] = $newCollection->id;
+                            }
+                            // Otherwise use existing collection
+                            else
                             {
                                 $specialProperties['collection_id'] = $tentativeCollection->id;
                             }
@@ -221,13 +244,12 @@ class BatchUpload_Job_GenerateRows extends Omeka_Job_AbstractJob {
      */
     private function __getCollectionByName($db, $name)
     {
-        $element = $db->getTable('Element')->findByElementSetNameAndElementName('Dublin Core', 'Title')->id;
+        $elementId = $db->getTable('Element')->findByElementSetNameAndElementName('Dublin Core', 'Title')->id;
         $collectionTable = $db->getTable('Collection');
         $select = $collectionTable->getSelect();
-        $select->joinInner(array('s' => $db->ElementText), 's.record_id = collections.id', array());
-        $select->where("s.record_type = 'Collection'");
-        $select->where("s.element_id = ?", $element->id);
-        $select->where("s.text = ?", $name);
+        $select->joinInner(array('buselement' => $db->ElementText), "buselement.record_id = collections.id AND buselement.record_type = 'Collection'", array('element_id', 'text'));
+        $select->where("buselement.element_id = ?", $elementId);
+        $select->where("buselement.text = ?", $name);
         return $collectionTable->fetchObject($select);
     }
 }
