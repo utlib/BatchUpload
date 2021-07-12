@@ -38,13 +38,14 @@
                 </div>
             </div>
             <div class="seven columns">
-                <table id="metadata-table" data-selectcontent="<?php echo html_escape($available_properties_options); ?>" data-shortcutmappings="<?php echo html_escape(json_encode($available_properties, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)); ?>">
+                <table id="metadata-table" data-selectcontent="<?php echo html_escape($available_properties_options); ?>" data-shortcutmappings="<?php echo html_escape(json_encode($available_properties, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)); ?>" data-separator="<?php echo get_option('csv_export_separator_character_internal') ?: '^^'; ?>">
                     <thead>
                         <tr>
                             <th><?php echo __("Original"); ?></th>
                             <th><?php echo __("Example"); ?></th>
                             <th><?php echo __("Property"); ?></th>
                             <th><?php echo __("HTML"); ?></th>
+                            <th><?php echo __("Separator"); ?></th>
                         </tr>
                     </thead>
                     <tbody>
