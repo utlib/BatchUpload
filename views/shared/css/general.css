@@ -1,3 +1,19 @@
 .inputs ul.error {
     clear: both;
 }
+
+#metadata-table {
+    table-layout: fixed;
+}
+
+#metadata-table thead th:nth-child(4), #metadata-table thead th:nth-child(5) {
+    width: 4em;
+}
+
+#metadata-table td {
+    word-wrap: break-word;
+}
+
+#metadata-table select {
+    max-width: 100%;
+}
