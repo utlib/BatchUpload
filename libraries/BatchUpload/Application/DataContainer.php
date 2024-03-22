@@ -21,7 +21,7 @@ class BatchUpload_Application_DataContainer implements JsonSerializable
      * Implementation of JsonSerializable.
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize() : mixed
     {
         return json_encode($this->_data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
